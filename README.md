@@ -72,8 +72,7 @@ A cross-platform desktop application for interfacing with Stable Diffusion APIs,
 stable-diffusion-desktop/
 ├── src/
 │   ├── main/           # Electron main process
-│   │   ├── index.ts    # Main application logic
-│   │   └── project-manager.ts # Project management
+│   │   └── index.ts    # Main application logic
 │   ├── preload/        # Preload scripts for secure IPC
 │   │   └── index.ts    # IPC bridge
 │   ├── renderer/       # Frontend application

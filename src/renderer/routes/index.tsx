@@ -1,7 +1,11 @@
-import type { Component } from "solid-js";
+import { createFileRoute } from "@tanstack/solid-router";
 import { createSignal, onMount, Switch, Match } from "solid-js";
-import { ApiKeyModal } from "./api-key-modal";
-import { ProjectSelector } from "./project-selector";
+import { ApiKeyModal } from "../api-key-modal";
+import { ProjectSelector } from "../project-selector";
+
+export const Route = createFileRoute("/")({
+  component: Home,
+});
 
 interface Project {
   name: string;
@@ -10,7 +14,7 @@ interface Project {
   lastOpened: string;
 }
 
-const App: Component = () => {
+function Home() {
   const [showApiKeyModal, setShowApiKeyModal] = createSignal(false);
   const [isCheckingApiKey, setIsCheckingApiKey] = createSignal(true);
   const [currentProject, setCurrentProject] = createSignal<Project | null>(
@@ -260,6 +264,4 @@ const App: Component = () => {
       </Match>
     </Switch>
   );
-};
-
-export default App;
+}

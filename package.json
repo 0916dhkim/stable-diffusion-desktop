@@ -13,6 +13,7 @@
     "build:linux": "electron-vite build && electron-builder --linux"
   },
   "devDependencies": {
+    "@tanstack/router-plugin": "^1.131.8",
     "drizzle-kit": "^0.31.4",
     "electron": "^37.2.6",
     "electron-builder": "^26.0.12",
@@ -26,6 +27,8 @@
     "@electron-toolkit/preload": "^3.0.2",
     "@electron-toolkit/utils": "^4.0.0",
     "@libsql/client": "^0.15.10",
+    "@tanstack/solid-router": "^1.131.9",
+    "@tanstack/solid-router-devtools": "^1.131.9",
     "drizzle-orm": "^0.44.4",
     "solid-js": "^1.9.9"
   }
