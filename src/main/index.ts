@@ -1,6 +1,10 @@
 import { app, shell, BrowserWindow, ipcMain } from "electron";
 import { join } from "path";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
+import { promises as fs } from "fs";
+import { existsSync } from "fs";
+
+const CONFIG_FILE_NAME = "stable-diffusion-desktop.config.json";
 
 function createWindow(): void {
   // Create the browser window.
@@ -33,6 +37,42 @@ function createWindow(): void {
   }
 }
 
+// Storage functions for API key management
+const getStorageFilePath = (): string => {
+  return join(app.getPath("userData"), CONFIG_FILE_NAME);
+};
+
+interface ConfigData {
+  apiKey?: string;
+}
+
+const loadConfig = async (): Promise<ConfigData> => {
+  const configPath = getStorageFilePath();
+
+  if (!existsSync(configPath)) {
+    return {};
+  }
+
+  try {
+    const data = await fs.readFile(configPath, "utf-8");
+    return JSON.parse(data);
+  } catch (error) {
+    console.error("Error reading config file:", error);
+    return {};
+  }
+};
+
+const saveConfig = async (config: ConfigData): Promise<void> => {
+  const configPath = getStorageFilePath();
+
+  try {
+    await fs.writeFile(configPath, JSON.stringify(config, null, 2));
+  } catch (error) {
+    console.error("Error writing config file:", error);
+    throw error;
+  }
+};
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
@@ -49,6 +89,23 @@ app.whenReady().then(() => {
 
   // IPC test
   ipcMain.on("ping", () => console.log("pong"));
+
+  // API key management IPC handlers
+  ipcMain.handle("get-api-key", async (): Promise<string | null> => {
+    const config = await loadConfig();
+    return config.apiKey || null;
+  });
+
+  ipcMain.handle("set-api-key", async (_, apiKey: string): Promise<void> => {
+    const config = await loadConfig();
+    config.apiKey = apiKey;
+    await saveConfig(config);
+  });
+
+  ipcMain.handle("has-api-key", async (): Promise<boolean> => {
+    const config = await loadConfig();
+    return !!config.apiKey && config.apiKey.trim().length > 0;
+  });
 
   createWindow();
 
