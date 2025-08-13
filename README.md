@@ -64,30 +64,72 @@ A cross-platform desktop application for interfacing with Stable Diffusion APIs,
 - **Frontend**: SolidJS
 - **Language**: TypeScript
 
-## 📁 Project Structure
+## 📁 Application Structure
+
+### Codebase Structure
 
 ```
 stable-diffusion-desktop/
 ├── src/
 │   ├── main/           # Electron main process
-│   │   └── index.ts    # Main application logic
+│   │   ├── index.ts    # Main application logic
+│   │   └── project-manager.ts # Project management
 │   ├── preload/        # Preload scripts for secure IPC
-│   │   ├── index.ts
-│   │   └── index.d.ts
-│   └── renderer/       # Frontend application
-│       ├── index.html  # Entry HTML file
-│       └── src/
-│           └── main.tsx # Application entry point
+│   │   └── index.ts    # IPC bridge
+│   ├── renderer/       # Frontend application
+│   │   ├── index.html  # Entry HTML file
+│   │   └── src/        # SolidJS components
+│   │       ├── app.tsx
+│   │       ├── project-selector.tsx
+│   │       └── main.tsx
+│   └── db/             # Database schema and migrations
+│       ├── schema.ts   # Drizzle ORM schema
+│       └── migrate.ts  # Database migration logic
 ├── build/              # Build resources (icons, etc.)
 └── out/                # Built application output
 ```
 
+### Project Data Structure
+
+Each project is a **self-contained directory** with the following structure:
+
+```
+ProjectName/                    # User-chosen project directory
+├── project.db                 # SQLite database containing:
+│                              #   - Project metadata
+│                              #   - Generation history
+│                              #   - Prompt/parameter records
+└── images/                    # Generated images directory
+    ├── generated_image_1.png
+    ├── generated_image_2.jpg
+    └── ...
+```
+
+**Key Features of Project Structure:**
+
+- **Self-contained**: Each project folder contains everything related to that project
+- **Portable**: Projects can be moved, copied, or backed up as single folders
+- **User-controlled**: Projects can be stored anywhere on the user's system
+- **Database-tracked**: All generation metadata is stored in the local SQLite database
+- **Recent Projects**: App remembers the last 10 opened projects for quick access
+
+**Project Management:**
+
+- **Simple Project Creation**: Click "Create New Project" and select/create the folder that will BE your project
+- **Direct Folder Selection**: No separate naming step - the folder name becomes the project name
+- **Open Existing Projects**: Select any existing project folder to open it
+- **Recent Projects Tracking**: Last 10 opened projects are automatically remembered and displayed
+- **Complete Self-Containment**: Each project folder contains everything related to that project
+
 ## 🏗 Development Roadmap
 
-### Phase 1: Core Infrastructure (Current)
+### Phase 1: Core Infrastructure
 
 - [x] Project setup and configuration
 - [x] Basic Electron application structure
+- [x] Project management system with SQLite/Drizzle
+- [x] Recent projects tracking
+- [x] Self-contained project structure
 - [ ] API integration framework
 - [ ] Basic UI components
 

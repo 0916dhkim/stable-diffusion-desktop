@@ -13,9 +13,11 @@
     "build:linux": "electron-vite build && electron-builder --linux"
   },
   "devDependencies": {
+    "drizzle-kit": "^0.31.4",
     "electron": "^37.2.6",
     "electron-builder": "^26.0.12",
     "electron-vite": "^4.0.0",
+    "tsx": "^4.20.4",
     "typescript": "^5.9.2",
     "vite": "^7.1.2",
     "vite-plugin-solid": "^2.11.8"
@@ -23,6 +25,8 @@
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.2",
     "@electron-toolkit/utils": "^4.0.0",
+    "@libsql/client": "^0.15.10",
+    "drizzle-orm": "^0.44.4",
     "solid-js": "^1.9.9"
   }
 }

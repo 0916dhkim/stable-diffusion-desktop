@@ -1,10 +1,11 @@
-import { app, shell, BrowserWindow, ipcMain } from "electron";
+import { app, shell, BrowserWindow, ipcMain, dialog } from "electron";
 import { join } from "path";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import { promises as fs } from "fs";
 import { existsSync } from "fs";
+import { projectManager, Project } from "./project-manager";
 
-const CONFIG_FILE_NAME = "stable-diffusion-desktop.config.json";
+const CONFIG_FILE_NAME = "config.json";
 
 function createWindow(): void {
   // Create the browser window.
@@ -44,6 +45,7 @@ const getStorageFilePath = (): string => {
 
 interface ConfigData {
   apiKey?: string;
+  recentProjects?: string[];
 }
 
 const loadConfig = async (): Promise<ConfigData> => {
@@ -76,7 +78,25 @@ const saveConfig = async (config: ConfigData): Promise<void> => {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.whenReady().then(() => {
+// Helper function to add project to recent list
+const addToRecentProjects = async (projectPath: string): Promise<void> => {
+  const config = await loadConfig();
+  let recentProjects = config.recentProjects || [];
+
+  // Remove if already exists
+  recentProjects = recentProjects.filter((path) => path !== projectPath);
+
+  // Add to front
+  recentProjects.unshift(projectPath);
+
+  // Keep only last 10
+  recentProjects = recentProjects.slice(0, 10);
+
+  config.recentProjects = recentProjects;
+  await saveConfig(config);
+};
+
+app.whenReady().then(async () => {
   // Set app user model id for windows
   electronApp.setAppUserModelId("com.electron");
 
@@ -105,6 +125,84 @@ app.whenReady().then(() => {
   ipcMain.handle("has-api-key", async (): Promise<boolean> => {
     const config = await loadConfig();
     return !!config.apiKey && config.apiKey.trim().length > 0;
+  });
+
+  // Recent projects management
+  ipcMain.handle("get-recent-projects", async (): Promise<Project[]> => {
+    const config = await loadConfig();
+    const recentProjects = config.recentProjects || [];
+    const validProjects: Project[] = [];
+
+    for (const projectPath of recentProjects) {
+      if (
+        existsSync(projectPath) &&
+        existsSync(join(projectPath, "project.db"))
+      ) {
+        try {
+          const projectInfo = await projectManager.getProjectInfo(projectPath);
+          if (projectInfo) {
+            validProjects.push(projectInfo);
+          }
+        } catch (error) {
+          console.error(`Error reading project ${projectPath}:`, error);
+        }
+      }
+    }
+
+    return validProjects;
+  });
+
+  ipcMain.handle(
+    "select-new-project-folder",
+    async (): Promise<string | null> => {
+      const result = await dialog.showOpenDialog({
+        properties: ["openDirectory", "createDirectory"],
+        title: "Select or Create Project Folder",
+        buttonLabel: "Select Folder",
+      });
+
+      if (result.canceled || result.filePaths.length === 0) {
+        return null;
+      }
+
+      return result.filePaths[0];
+    }
+  );
+
+  // Project management IPC handlers
+  ipcMain.handle(
+    "create-project",
+    async (_, projectPath: string): Promise<Project> => {
+      const project = await projectManager.createProject(projectPath);
+      await addToRecentProjects(project.path);
+      return project;
+    }
+  );
+
+  ipcMain.handle("open-project", async (_, path: string): Promise<void> => {
+    await projectManager.openProject(path);
+    await addToRecentProjects(path);
+  });
+
+  ipcMain.handle("get-current-project", async (): Promise<Project | null> => {
+    return await projectManager.getCurrentProject();
+  });
+
+  ipcMain.handle("close-project", async (): Promise<void> => {
+    projectManager.closeProject();
+  });
+
+  ipcMain.handle("select-project-folder", async (): Promise<string | null> => {
+    const result = await dialog.showOpenDialog({
+      properties: ["openDirectory"],
+      title: "Select Project Folder",
+    });
+
+    if (result.canceled || result.filePaths.length === 0) {
+      return null;
+    }
+
+    return result.filePaths[0];
   });
 
   createWindow();
