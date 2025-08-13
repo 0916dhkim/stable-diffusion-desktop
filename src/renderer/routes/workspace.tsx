@@ -1,5 +1,5 @@
 import { createFileRoute, redirect } from "@tanstack/solid-router";
-import { createSignal, onMount, Show } from "solid-js";
+import { Suspense } from "solid-js";
 
 // Workspace route with project query parameter
 export const Route = createFileRoute("/workspace")({
@@ -19,16 +19,27 @@ export const Route = createFileRoute("/workspace")({
     if (!projectPath) {
       throw redirect({ to: "/" });
     }
+  },
+  loaderDeps: ({ search: { project } }) => ({ project }),
+  loader: async ({ deps }) => {
+    const projectPath = deps.project;
 
-    // Validate project path exists and is accessible
     try {
-      const projectInfo = await window.api.getCurrentProject();
-      if (!projectInfo || projectInfo.path !== projectPath) {
+      // Check if we have the right project open
+      const currentProject = await window.api.getCurrentProject();
+      if (!currentProject || currentProject.path !== projectPath) {
         // Try to open the project from the URL
         await window.api.openProject(projectPath);
+        // Get the project info after opening
+        const projectInfo = await window.api.getCurrentProject();
+        if (!projectInfo) {
+          throw new Error("Failed to load project");
+        }
+        return projectInfo;
       }
+      return currentProject;
     } catch (error) {
-      console.error("Error validating project:", error);
+      console.error("Error loading project:", error);
       throw redirect({ to: "/", search: { error: "invalid-project" } });
     }
   },
@@ -45,24 +56,8 @@ interface Project {
 function Workspace() {
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
+  const loaderData = Route.useLoaderData();
   const projectPath = search().project;
-
-  const [currentProject, setCurrentProject] = createSignal<Project | null>(
-    null
-  );
-  const [isLoading, setIsLoading] = createSignal(true);
-
-  onMount(async () => {
-    try {
-      const project = await window.api.getCurrentProject();
-      setCurrentProject(project);
-    } catch (error) {
-      console.error("Error loading project:", error);
-      navigate({ to: "/" });
-    } finally {
-      setIsLoading(false);
-    }
-  });
 
   const handleCloseProject = async () => {
     try {
@@ -83,8 +78,7 @@ function Workspace() {
   };
 
   return (
-    <Show
-      when={!isLoading() && currentProject()}
+    <Suspense
       fallback={
         <div
           style={{
@@ -158,7 +152,7 @@ function Workspace() {
                 "font-weight": "600",
               }}
             >
-              {currentProject()?.name}
+              {loaderData().name}
             </h1>
             <div
               style={{
@@ -270,6 +264,6 @@ function Workspace() {
           </div>
         </div>
       </div>
-    </Show>
+    </Suspense>
   );
 }

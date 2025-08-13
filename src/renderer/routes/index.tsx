@@ -1,5 +1,5 @@
-import { createFileRoute } from "@tanstack/solid-router";
-import { createSignal, onMount, For, Show, Switch, Match } from "solid-js";
+import { createFileRoute, redirect } from "@tanstack/solid-router";
+import { createSignal, For, Show, Suspense, createEffect } from "solid-js";
 import { ApiKeyModal } from "../api-key-modal";
 
 export const Route = createFileRoute("/")({
@@ -7,6 +7,24 @@ export const Route = createFileRoute("/")({
     return {
       showApiModal: (search.showApiModal as boolean) || false,
       error: (search.error as string) || "",
+    };
+  },
+  loader: async () => {
+    // Check API key first
+    const hasApiKey = await window.api.hasApiKey();
+
+    // Load recent projects
+    const recentProjects = await window.api.getRecentProjects();
+
+    // Check for current project
+    const currentProject = await window.api.getCurrentProject();
+
+    return {
+      hasApiKey,
+      recentProjects,
+      currentProject,
+      showApiModal: !hasApiKey,
+      error: "",
     };
   },
   component: Home,
@@ -21,58 +39,26 @@ interface Project {
 
 function Home() {
   const navigate = Route.useNavigate();
+  const loaderData = Route.useLoaderData();
+
   const search = Route.useSearch();
 
   const [showApiKeyModal, setShowApiKeyModal] = createSignal(
-    search().showApiModal
+    !loaderData().hasApiKey || search().showApiModal
   );
-  const [isCheckingApiKey, setIsCheckingApiKey] = createSignal(true);
-  const [recentProjects, setRecentProjects] = createSignal<Project[]>([]);
-  const [isLoadingProjects, setIsLoadingProjects] = createSignal(true);
   const [isCreating, setIsCreating] = createSignal(false);
   const [errorMessage, setErrorMessage] = createSignal<string>(
     search().error || ""
   );
 
-  const loadRecentProjects = async () => {
-    try {
-      setIsLoadingProjects(true);
-      const projectList = await window.api.getRecentProjects();
-      setRecentProjects(projectList);
-      setErrorMessage("");
-    } catch (err) {
-      console.error("Error loading recent projects:", err);
-      setErrorMessage("Failed to load recent projects. Please try again.");
-    } finally {
-      setIsLoadingProjects(false);
-    }
-  };
-
-  onMount(async () => {
-    try {
-      // Check API key first
-      const hasKey = await window.api.hasApiKey();
-      if (!hasKey || search().showApiModal) {
-        setShowApiKeyModal(true);
-      }
-
-      // Load recent projects
-      await loadRecentProjects();
-
-      // Check if there's a current project and redirect to workspace
-      const currentProject = await window.api.getCurrentProject();
-      if (currentProject && !search().showApiModal) {
-        navigate({
-          to: "/workspace",
-          search: { project: currentProject.path },
-        });
-        return;
-      }
-    } catch (error) {
-      console.error("Error during initialization:", error);
-      setShowApiKeyModal(true);
-    } finally {
-      setIsCheckingApiKey(false);
+  // Auto-redirect to workspace if we have project and no API modal needed
+  createEffect(() => {
+    const currentProject = loaderData().currentProject;
+    if (loaderData().hasApiKey && !search().showApiModal && currentProject) {
+      navigate({
+        to: "/workspace",
+        search: { project: currentProject.path },
+      });
     }
   });
 
@@ -80,8 +66,8 @@ function Home() {
     try {
       await window.api.setApiKey(apiKey);
       setShowApiKeyModal(false);
-      // Clear the showApiModal from URL
-      navigate({ to: "/", search: { showApiModal: false, error: "" } });
+      // Reload the page to refresh loader data
+      window.location.reload();
     } catch (error) {
       console.error("Error saving API key:", error);
       setErrorMessage("Failed to save API key. Please try again.");
@@ -167,8 +153,8 @@ function Home() {
       <ApiKeyModal isOpen={showApiKeyModal()} onSubmit={handleApiKeySubmit} />
 
       {/* Main Project Selection Interface */}
-      <Switch>
-        <Match when={isCheckingApiKey() || isLoadingProjects()}>
+      <Suspense
+        fallback={
           <div
             style={{
               height: "100vh",
@@ -192,7 +178,7 @@ function Home() {
                   margin: "0 auto 16px",
                 }}
               />
-              <p>{isCheckingApiKey() ? "Loading..." : "Loading projects..."}</p>
+              <p>Loading...</p>
               <style>
                 {`
                   @keyframes spin {
@@ -203,274 +189,271 @@ function Home() {
               </style>
             </div>
           </div>
-        </Match>
-
-        <Match when={!isCheckingApiKey() && !isLoadingProjects()}>
+        }
+      >
+        <div
+          style={{
+            height: "100vh",
+            display: "flex",
+            "align-items": "center",
+            "justify-content": "center",
+            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+            color: "white",
+            "font-family": "system-ui, -apple-system, sans-serif",
+            padding: "20px",
+          }}
+        >
           <div
             style={{
-              height: "100vh",
-              display: "flex",
-              "align-items": "center",
-              "justify-content": "center",
-              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-              color: "white",
-              "font-family": "system-ui, -apple-system, sans-serif",
-              padding: "20px",
+              background: "rgba(255, 255, 255, 0.95)",
+              "border-radius": "16px",
+              padding: "32px",
+              "max-width": "800px",
+              width: "100%",
+              "max-height": "90vh",
+              "overflow-y": "auto",
+              color: "#1f2937",
+              "box-shadow": "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
             }}
           >
-            <div
-              style={{
-                background: "rgba(255, 255, 255, 0.95)",
-                "border-radius": "16px",
-                padding: "32px",
-                "max-width": "800px",
-                width: "100%",
-                "max-height": "90vh",
-                "overflow-y": "auto",
-                color: "#1f2937",
-                "box-shadow": "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
-              }}
-            >
-              <div style={{ "text-align": "center", "margin-bottom": "32px" }}>
-                <h1
-                  style={{
-                    "font-size": "32px",
-                    "font-weight": "700",
-                    margin: "0 0 8px 0",
-                    background: "linear-gradient(45deg, #667eea, #764ba2)",
-                    "-webkit-background-clip": "text",
-                    "-webkit-text-fill-color": "transparent",
-                  }}
-                >
-                  Stable Diffusion Desktop
-                </h1>
-                <p
-                  style={{
-                    "font-size": "16px",
-                    color: "#6b7280",
-                    margin: "0",
-                  }}
-                >
-                  Choose a project to get started
-                </p>
-              </div>
-
-              <Show when={errorMessage()}>
-                <div
-                  style={{
-                    background: "#fef2f2",
-                    border: "1px solid #fecaca",
-                    color: "#dc2626",
-                    padding: "12px 16px",
-                    "border-radius": "8px",
-                    "margin-bottom": "24px",
-                    "font-size": "14px",
-                  }}
-                >
-                  {errorMessage()}
-                </div>
-              </Show>
-
-              <Show when={recentProjects().length > 0}>
-                <div style={{ "margin-bottom": "32px" }}>
-                  <h2
-                    style={{
-                      "font-size": "20px",
-                      "font-weight": "600",
-                      margin: "0 0 16px 0",
-                      color: "#1f2937",
-                    }}
-                  >
-                    Recent Projects
-                  </h2>
-                  <div
-                    style={{
-                      display: "grid",
-                      gap: "16px",
-                      "grid-template-columns":
-                        "repeat(auto-fit, minmax(300px, 1fr))",
-                    }}
-                  >
-                    <For each={recentProjects()}>
-                      {(project) => (
-                        <div
-                          onClick={() => handleOpenProject(project)}
-                          style={{
-                            border: "2px solid #e5e7eb",
-                            "border-radius": "12px",
-                            padding: "20px",
-                            cursor: "pointer",
-                            transition: "all 0.2s",
-                            background: "white",
-                            "box-shadow": "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.borderColor = "#3b82f6";
-                            e.currentTarget.style.transform =
-                              "translateY(-2px)";
-                            e.currentTarget.style.boxShadow =
-                              "0 8px 25px -8px rgba(0, 0, 0, 0.15)";
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.borderColor = "#e5e7eb";
-                            e.currentTarget.style.transform = "translateY(0)";
-                            e.currentTarget.style.boxShadow =
-                              "0 4px 6px -1px rgba(0, 0, 0, 0.1)";
-                          }}
-                        >
-                          <h3
-                            style={{
-                              "font-size": "20px",
-                              "font-weight": "600",
-                              margin: "0 0 8px 0",
-                              color: "#1f2937",
-                            }}
-                          >
-                            {project.name}
-                          </h3>
-                          <p
-                            style={{
-                              "font-size": "14px",
-                              color: "#6b7280",
-                              margin: "0 0 4px 0",
-                            }}
-                          >
-                            Created: {formatDate(project.createdAt)}
-                          </p>
-                          <p
-                            style={{
-                              "font-size": "14px",
-                              color: "#6b7280",
-                              margin: "0 0 8px 0",
-                            }}
-                          >
-                            Last opened: {formatDate(project.lastOpened)}
-                          </p>
-                          <p
-                            style={{
-                              "font-size": "12px",
-                              color: "#9ca3af",
-                              margin: "0",
-                              "font-family": "monospace",
-                              "word-break": "break-all",
-                            }}
-                          >
-                            {project.path}
-                          </p>
-                        </div>
-                      )}
-                    </For>
-                  </div>
-                </div>
-              </Show>
-
-              <Show when={recentProjects().length === 0}>
-                <div
-                  style={{
-                    "text-align": "center",
-                    padding: "40px",
-                    color: "#6b7280",
-                    "margin-bottom": "32px",
-                  }}
-                >
-                  <div
-                    style={{
-                      width: "64px",
-                      height: "64px",
-                      background: "linear-gradient(45deg, #e5e7eb, #d1d5db)",
-                      "border-radius": "50%",
-                      display: "flex",
-                      "align-items": "center",
-                      "justify-content": "center",
-                      margin: "0 auto 16px",
-                    }}
-                  >
-                    <svg
-                      width="32"
-                      height="32"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="#6b7280"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    >
-                      <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
-                    </svg>
-                  </div>
-                  <p style={{ "font-size": "18px", margin: "0 0 8px 0" }}>
-                    No recent projects
-                  </p>
-                  <p style={{ "font-size": "14px", margin: "0" }}>
-                    Create a new project or open an existing one to get started
-                  </p>
-                </div>
-              </Show>
-
-              <div
+            <div style={{ "text-align": "center", "margin-bottom": "32px" }}>
+              <h1
                 style={{
-                  display: "flex",
-                  gap: "12px",
-                  "justify-content": "center",
-                  "flex-wrap": "wrap",
+                  "font-size": "32px",
+                  "font-weight": "700",
+                  margin: "0 0 8px 0",
+                  background: "linear-gradient(45deg, #667eea, #764ba2)",
+                  "-webkit-background-clip": "text",
+                  "-webkit-text-fill-color": "transparent",
                 }}
               >
-                <button
-                  onClick={handleCreateNewProject}
-                  disabled={isCreating()}
-                  style={{
-                    padding: "12px 24px",
-                    background: "#3b82f6",
-                    color: "white",
-                    border: "none",
-                    "border-radius": "8px",
-                    "font-size": "16px",
-                    "font-weight": "500",
-                    cursor: "pointer",
-                    transition: "all 0.2s",
-                    opacity: isCreating() ? "0.6" : "1",
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!isCreating()) {
-                      e.currentTarget.style.background = "#2563eb";
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = "#3b82f6";
-                  }}
-                >
-                  {isCreating() ? "Creating..." : "Create New Project"}
-                </button>
+                Stable Diffusion Desktop
+              </h1>
+              <p
+                style={{
+                  "font-size": "16px",
+                  color: "#6b7280",
+                  margin: "0",
+                }}
+              >
+                Choose a project to get started
+              </p>
+            </div>
 
-                <button
-                  onClick={handleOpenExistingProject}
+            <Show when={errorMessage()}>
+              <div
+                style={{
+                  background: "#fef2f2",
+                  border: "1px solid #fecaca",
+                  color: "#dc2626",
+                  padding: "12px 16px",
+                  "border-radius": "8px",
+                  "margin-bottom": "24px",
+                  "font-size": "14px",
+                }}
+              >
+                {errorMessage()}
+              </div>
+            </Show>
+
+            <Show when={loaderData().recentProjects.length > 0}>
+              <div style={{ "margin-bottom": "32px" }}>
+                <h2
                   style={{
-                    padding: "12px 24px",
-                    background: "transparent",
-                    color: "#3b82f6",
-                    border: "2px solid #3b82f6",
-                    "border-radius": "8px",
-                    "font-size": "16px",
-                    "font-weight": "500",
-                    cursor: "pointer",
-                    transition: "all 0.2s",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = "#3b82f6";
-                    e.currentTarget.style.color = "white";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = "transparent";
-                    e.currentTarget.style.color = "#3b82f6";
+                    "font-size": "20px",
+                    "font-weight": "600",
+                    margin: "0 0 16px 0",
+                    color: "#1f2937",
                   }}
                 >
-                  Open Existing Project
-                </button>
+                  Recent Projects
+                </h2>
+                <div
+                  style={{
+                    display: "grid",
+                    gap: "16px",
+                    "grid-template-columns":
+                      "repeat(auto-fit, minmax(300px, 1fr))",
+                  }}
+                >
+                  <For each={loaderData().recentProjects}>
+                    {(project) => (
+                      <div
+                        onClick={() => handleOpenProject(project)}
+                        style={{
+                          border: "2px solid #e5e7eb",
+                          "border-radius": "12px",
+                          padding: "20px",
+                          cursor: "pointer",
+                          transition: "all 0.2s",
+                          background: "white",
+                          "box-shadow": "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.borderColor = "#3b82f6";
+                          e.currentTarget.style.transform = "translateY(-2px)";
+                          e.currentTarget.style.boxShadow =
+                            "0 8px 25px -8px rgba(0, 0, 0, 0.15)";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.borderColor = "#e5e7eb";
+                          e.currentTarget.style.transform = "translateY(0)";
+                          e.currentTarget.style.boxShadow =
+                            "0 4px 6px -1px rgba(0, 0, 0, 0.1)";
+                        }}
+                      >
+                        <h3
+                          style={{
+                            "font-size": "20px",
+                            "font-weight": "600",
+                            margin: "0 0 8px 0",
+                            color: "#1f2937",
+                          }}
+                        >
+                          {project.name}
+                        </h3>
+                        <p
+                          style={{
+                            "font-size": "14px",
+                            color: "#6b7280",
+                            margin: "0 0 4px 0",
+                          }}
+                        >
+                          Created: {formatDate(project.createdAt)}
+                        </p>
+                        <p
+                          style={{
+                            "font-size": "14px",
+                            color: "#6b7280",
+                            margin: "0 0 8px 0",
+                          }}
+                        >
+                          Last opened: {formatDate(project.lastOpened)}
+                        </p>
+                        <p
+                          style={{
+                            "font-size": "12px",
+                            color: "#9ca3af",
+                            margin: "0",
+                            "font-family": "monospace",
+                            "word-break": "break-all",
+                          }}
+                        >
+                          {project.path}
+                        </p>
+                      </div>
+                    )}
+                  </For>
+                </div>
               </div>
+            </Show>
+
+            <Show when={loaderData().recentProjects.length === 0}>
+              <div
+                style={{
+                  "text-align": "center",
+                  padding: "40px",
+                  color: "#6b7280",
+                  "margin-bottom": "32px",
+                }}
+              >
+                <div
+                  style={{
+                    width: "64px",
+                    height: "64px",
+                    background: "linear-gradient(45deg, #e5e7eb, #d1d5db)",
+                    "border-radius": "50%",
+                    display: "flex",
+                    "align-items": "center",
+                    "justify-content": "center",
+                    margin: "0 auto 16px",
+                  }}
+                >
+                  <svg
+                    width="32"
+                    height="32"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#6b7280"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                  </svg>
+                </div>
+                <p style={{ "font-size": "18px", margin: "0 0 8px 0" }}>
+                  No recent projects
+                </p>
+                <p style={{ "font-size": "14px", margin: "0" }}>
+                  Create a new project or open an existing one to get started
+                </p>
+              </div>
+            </Show>
+
+            <div
+              style={{
+                display: "flex",
+                gap: "12px",
+                "justify-content": "center",
+                "flex-wrap": "wrap",
+              }}
+            >
+              <button
+                onClick={handleCreateNewProject}
+                disabled={isCreating()}
+                style={{
+                  padding: "12px 24px",
+                  background: "#3b82f6",
+                  color: "white",
+                  border: "none",
+                  "border-radius": "8px",
+                  "font-size": "16px",
+                  "font-weight": "500",
+                  cursor: "pointer",
+                  transition: "all 0.2s",
+                  opacity: isCreating() ? "0.6" : "1",
+                }}
+                onMouseEnter={(e) => {
+                  if (!isCreating()) {
+                    e.currentTarget.style.background = "#2563eb";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "#3b82f6";
+                }}
+              >
+                {isCreating() ? "Creating..." : "Create New Project"}
+              </button>
+
+              <button
+                onClick={handleOpenExistingProject}
+                style={{
+                  padding: "12px 24px",
+                  background: "transparent",
+                  color: "#3b82f6",
+                  border: "2px solid #3b82f6",
+                  "border-radius": "8px",
+                  "font-size": "16px",
+                  "font-weight": "500",
+                  cursor: "pointer",
+                  transition: "all 0.2s",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "#3b82f6";
+                  e.currentTarget.style.color = "white";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "transparent";
+                  e.currentTarget.style.color = "#3b82f6";
+                }}
+              >
+                Open Existing Project
+              </button>
             </div>
           </div>
-        </Match>
-      </Switch>
+        </div>
+      </Suspense>
     </>
   );
 }
