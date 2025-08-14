@@ -1,5 +1,6 @@
-import { createFileRoute, Outlet, redirect } from "@tanstack/solid-router";
-import { createSignal, For, Show, Suspense, createEffect } from "solid-js";
+import { createFileRoute, Outlet } from "@tanstack/solid-router";
+import { useMutation } from "@tanstack/solid-query";
+import { For, Show, Suspense, createEffect, Match, Switch } from "solid-js";
 import { Project } from "../../main/project-manager";
 
 export const Route = createFileRoute("/home")({
@@ -27,8 +28,24 @@ function Home() {
   const navigate = Route.useNavigate();
   const loaderData = Route.useLoaderData();
 
-  const [isCreating, setIsCreating] = createSignal(false);
-  const [errorMessage, setErrorMessage] = createSignal<string>("");
+  const getErrorMessage = (err: unknown) => {
+    if (!err) return "";
+    if (err instanceof Error) return err.message;
+    if (typeof err === "string") return err;
+    try {
+      return JSON.stringify(err);
+    } catch {
+      return "An error occurred";
+    }
+  };
+  const errorMessages = () =>
+    [
+      createProjectMutation.error,
+      openProjectMutation.error,
+      openExistingProjectMutation.error,
+    ]
+      .map((e) => getErrorMessage(e))
+      .filter((msg) => msg);
 
   createEffect(() => {
     if (!loaderData().hasApiKey) {
@@ -59,58 +76,52 @@ function Home() {
     });
   };
 
-  const handleCreateNewProject = async () => {
-    try {
-      setIsCreating(true);
-      setErrorMessage("");
-
+  const createProjectMutation = useMutation(() => ({
+    mutationFn: async () => {
       const projectPath = await window.api.selectNewProjectFolder();
-      if (projectPath) {
-        const newProject = await window.api.createProject(projectPath);
-        await window.api.openProject(newProject.path);
-        handleProjectSelected(newProject);
-      }
-    } catch (err) {
+      if (!projectPath) return undefined as unknown as Project;
+      const newProject = await window.api.createProject(projectPath);
+      await window.api.openProject(newProject.path);
+      return newProject as Project;
+    },
+    onSuccess: (newProject) => {
+      if (!newProject) return;
+      handleProjectSelected(newProject);
+    },
+    onError: (err) => {
       console.error("Error creating project:", err);
-      setErrorMessage(
-        err instanceof Error ? err.message : "Failed to create project"
-      );
-    } finally {
-      setIsCreating(false);
-    }
-  };
+    },
+  }));
 
-  const handleOpenProject = async (project: Project) => {
-    try {
-      setErrorMessage("");
+  const openProjectMutation = useMutation(() => ({
+    mutationFn: async (project: Project) => {
       await window.api.openProject(project.path);
+      return project;
+    },
+    onSuccess: (project) => {
       handleProjectSelected(project);
-    } catch (err) {
+    },
+    onError: (err) => {
       console.error("Error opening project:", err);
-      setErrorMessage(
-        err instanceof Error ? err.message : "Failed to open project"
-      );
-    }
-  };
+    },
+  }));
 
-  const handleOpenExistingProject = async () => {
-    try {
-      setErrorMessage("");
+  const openExistingProjectMutation = useMutation(() => ({
+    mutationFn: async () => {
       const projectPath = await window.api.selectProjectFolder();
-      if (projectPath) {
-        await window.api.openProject(projectPath);
-        const projectInfo = await window.api.getCurrentProject();
-        if (projectInfo) {
-          handleProjectSelected(projectInfo);
-        }
-      }
-    } catch (err) {
+      if (!projectPath) return undefined as unknown as Project;
+      await window.api.openProject(projectPath);
+      const projectInfo = await window.api.getCurrentProject();
+      return (projectInfo || undefined) as unknown as Project;
+    },
+    onSuccess: (projectInfo) => {
+      if (!projectInfo) return;
+      handleProjectSelected(projectInfo);
+    },
+    onError: (err) => {
       console.error("Error opening existing project:", err);
-      setErrorMessage(
-        err instanceof Error ? err.message : "Failed to open existing project"
-      );
-    }
-  };
+    },
+  }));
 
   const formatDate = (dateString: string) => {
     if (!dateString) return "Unknown";
@@ -213,21 +224,31 @@ function Home() {
             </p>
           </div>
 
-          <Show when={errorMessage()}>
-            <div
-              style={{
-                background: "#fef2f2",
-                border: "1px solid #fecaca",
-                color: "#dc2626",
-                padding: "12px 16px",
-                "border-radius": "8px",
-                "margin-bottom": "24px",
-                "font-size": "14px",
-              }}
-            >
-              {errorMessage()}
-            </div>
-          </Show>
+          <div
+            style={{
+              display: "flex",
+              "flex-direction": "column",
+              gap: "8px",
+              "margin-bottom": "24px",
+            }}
+          >
+            <For each={errorMessages()}>
+              {(msg) => (
+                <div
+                  style={{
+                    background: "#fef2f2",
+                    border: "1px solid #fecaca",
+                    color: "#dc2626",
+                    padding: "12px 16px",
+                    "border-radius": "8px",
+                    "font-size": "14px",
+                  }}
+                >
+                  {msg}
+                </div>
+              )}
+            </For>
+          </div>
 
           <Show when={loaderData().recentProjects.length > 0}>
             <div style={{ "margin-bottom": "32px" }}>
@@ -252,7 +273,7 @@ function Home() {
                 <For each={loaderData().recentProjects}>
                   {(project) => (
                     <div
-                      onClick={() => handleOpenProject(project)}
+                      onClick={() => openProjectMutation.mutate(project)}
                       style={{
                         border: "2px solid #e5e7eb",
                         "border-radius": "12px",
@@ -373,8 +394,8 @@ function Home() {
             }}
           >
             <button
-              onClick={handleCreateNewProject}
-              disabled={isCreating()}
+              onClick={() => createProjectMutation.mutate()}
+              disabled={createProjectMutation.isPending}
               style={{
                 padding: "12px 24px",
                 background: "#3b82f6",
@@ -385,10 +406,10 @@ function Home() {
                 "font-weight": "500",
                 cursor: "pointer",
                 transition: "all 0.2s",
-                opacity: isCreating() ? "0.6" : "1",
+                opacity: createProjectMutation.isPending ? "0.6" : "1",
               }}
               onMouseEnter={(e) => {
-                if (!isCreating()) {
+                if (!createProjectMutation.isPending) {
                   e.currentTarget.style.background = "#2563eb";
                 }
               }}
@@ -396,11 +417,15 @@ function Home() {
                 e.currentTarget.style.background = "#3b82f6";
               }}
             >
-              {isCreating() ? "Creating..." : "Create New Project"}
+              <Switch fallback="Create New Project">
+                <Match when={createProjectMutation.isPending}>
+                  Creating...
+                </Match>
+              </Switch>
             </button>
 
             <button
-              onClick={handleOpenExistingProject}
+              onClick={() => openExistingProjectMutation.mutate()}
               style={{
                 padding: "12px 24px",
                 background: "transparent",
