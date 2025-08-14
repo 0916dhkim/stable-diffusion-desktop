@@ -2,6 +2,15 @@
 
 A cross-platform desktop application for interfacing with Stable Diffusion APIs, providing an intuitive user interface for AI image generation with comprehensive prompt and image management.
 
+## Contribution
+
+```sh
+npm install
+npm run dev
+```
+
+Packaging does not work yet.
+
 ## 🎯 Project Goals
 
 **Primary Objective**: Create a user-friendly desktop application that simplifies the process of generating AI images using Stable Diffusion models while maintaining a complete history of prompts and generated content.
@@ -25,27 +34,23 @@ A cross-platform desktop application for interfacing with Stable Diffusion APIs,
 ### Planned Features
 
 - 🔄 **API Integration**
-
   - Support for multiple Stable Diffusion API providers
   - Configurable API endpoints and authentication
   - Real-time generation status monitoring
 
 - 🔄 **Prompt Management**
-
   - Advanced prompt editor with syntax highlighting
   - Prompt templates and presets
   - Prompt history and favorites
   - Batch prompt processing
 
 - 🔄 **Image Generation Controls**
-
   - Comprehensive parameter configuration (steps, guidance scale, seed, etc.)
   - Multiple sampling methods support
   - Resolution and aspect ratio presets
   - Negative prompt support
 
 - 🔄 **Gallery & Organization**
-
   - Grid-based image gallery with metadata
   - Image-to-prompt association tracking
   - Search and filter functionality
