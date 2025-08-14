@@ -1,5 +1,6 @@
 import { createFileRoute, redirect } from "@tanstack/solid-router";
-import { Suspense } from "solid-js";
+import { Suspense, createMemo, createSignal, Show } from "solid-js";
+import { useMutation } from "@tanstack/solid-query";
 
 // Workspace route with project query parameter
 export const Route = createFileRoute("/workspace")({
@@ -51,6 +52,60 @@ function Workspace() {
   const navigate = Route.useNavigate();
   const loaderData = Route.useLoaderData();
   const projectPath = search().project;
+
+  // Image prompt form state
+  const [prompt, setPrompt] = createSignal("");
+  const [negativePrompt, setNegativePrompt] = createSignal("");
+  const [model, setModel] = createSignal<string | undefined>(undefined);
+  const [steps, setSteps] = createSignal<number | undefined>(undefined);
+  const [cfgScale, setCfgScale] = createSignal<number | undefined>(undefined);
+  const [width, setWidth] = createSignal<number | undefined>(undefined);
+  const [height, setHeight] = createSignal<number | undefined>(undefined);
+  const [seed, setSeed] = createSignal("");
+  const [showAdvanced, setShowAdvanced] = createSignal(false);
+
+  const generateImageMutation = useMutation(() => ({
+    mutationFn: async (input: {
+      prompt: string;
+      negativePrompt?: string;
+      model?: string;
+      steps?: number;
+      cfgScale?: number;
+      width?: number;
+      height?: number;
+      seed?: string;
+      projectPath: string;
+    }) => {
+      // Placeholder: wire to backend generation later
+      // eslint-disable-next-line no-console
+      console.log("Generate image with:", input);
+      await new Promise((r) => setTimeout(r, 500));
+      return { ok: true } as const;
+    },
+    onError: (err) => {
+      console.error("Error generating image:", err);
+    },
+  }));
+
+  const canSubmit = createMemo(
+    () => prompt().trim().length > 0 && !generateImageMutation.isPending
+  );
+
+  const handleSubmit = async (e: Event) => {
+    e.preventDefault();
+    if (!canSubmit()) return;
+    generateImageMutation.mutate({
+      prompt: prompt().trim(),
+      negativePrompt: negativePrompt().trim() || undefined,
+      model: model(),
+      steps: steps(),
+      cfgScale: cfgScale(),
+      width: width(),
+      height: height(),
+      seed: seed().trim() || undefined,
+      projectPath,
+    });
+  };
 
   const handleCloseProject = async () => {
     try {
@@ -211,50 +266,367 @@ function Workspace() {
           style={{
             flex: "1",
             display: "flex",
-            "align-items": "center",
+            padding: "32px",
+            gap: "24px",
+            "align-items": "flex-start",
             "justify-content": "center",
-            padding: "40px",
           }}
         >
-          <div style={{ "text-align": "center" }}>
-            <h2
-              style={{
-                "font-size": "36px",
-                "font-weight": "700",
-                margin: "0 0 16px 0",
-                opacity: "0.9",
-              }}
-            >
-              Ready to Create
-            </h2>
-            <p
-              style={{
-                "font-size": "18px",
-                opacity: "0.8",
-                margin: "0 0 32px 0",
-              }}
-            >
-              Your project is ready. Start generating amazing images with AI!
-            </p>
+          {/* Prompt form */}
+          <form
+            onSubmit={handleSubmit}
+            style={{
+              width: "100%",
+              "max-width": "860px",
+              background: "rgba(255, 255, 255, 0.1)",
+              "backdrop-filter": "blur(10px)",
+              "border-radius": "12px",
+              padding: "24px",
+              border: "1px solid rgba(255, 255, 255, 0.2)",
+            }}
+          >
             <div
               style={{
-                padding: "20px",
-                background: "rgba(255, 255, 255, 0.1)",
-                "border-radius": "12px",
-                "backdrop-filter": "blur(10px)",
+                display: "flex",
+                "justify-content": "space-between",
+                "align-items": "baseline",
+                "margin-bottom": "12px",
               }}
             >
-              <p
+              <h2
+                style={{ margin: 0, "font-size": "20px", "font-weight": 600 }}
+              >
+                Image Generation
+              </h2>
+              <div style={{ opacity: 0.8, "font-size": "12px" }}>
+                {loaderData().name}
+              </div>
+            </div>
+
+            {/* Prompt */}
+            <label
+              style={{
+                display: "block",
+                "font-size": "14px",
+                "font-weight": 500,
+                margin: "12px 0 6px 0",
+                opacity: 0.95,
+              }}
+            >
+              Prompt
+            </label>
+            <textarea
+              value={prompt()}
+              onInput={(e) => setPrompt(e.currentTarget.value)}
+              placeholder="A cinematic portrait of a cyberpunk samurai, dramatic lighting, 35mm film"
+              rows={3}
+              style={{
+                width: "100%",
+                resize: "vertical",
+                padding: "12px",
+                background: "rgba(255, 255, 255, 0.9)",
+                color: "#111827",
+                border: "1px solid rgba(0,0,0,0.1)",
+                "border-radius": "8px",
+                "font-size": "14px",
+              }}
+            />
+
+            {/* Advanced options toggle */}
+            <div style={{ margin: "16px 0 12px 0" }}>
+              <button
+                type="button"
+                aria-expanded={showAdvanced() ? "true" : "false"}
+                onClick={() => setShowAdvanced((v) => !v)}
                 style={{
-                  margin: "0",
-                  "font-size": "14px",
-                  opacity: "0.8",
+                  width: "100%",
+                  display: "flex",
+                  "align-items": "center",
+                  "justify-content": "space-between",
+                  gap: "8px",
+                  padding: "8px 12px",
+                  background: "transparent",
+                  color: "white",
+                  border: "1px solid rgba(255, 255, 255, 0.4)",
+                  "border-radius": "8px",
+                  cursor: "pointer",
                 }}
               >
-                Image generation functionality will be implemented here
-              </p>
+                <span style={{ "font-weight": 600, "font-size": "14px" }}>
+                  Advanced options
+                </span>
+                <span style={{ opacity: 0.9, "font-size": "12px" }}>
+                  {showAdvanced() ? "Hide" : "Show"}
+                </span>
+              </button>
+
+              <Show when={showAdvanced()}>
+                <div style={{ margin: "12px 0 0 0" }}>
+                  {/* Negative Prompt */}
+                  <label
+                    style={{
+                      display: "block",
+                      "font-size": "14px",
+                      "font-weight": 500,
+                      margin: "0 0 6px 0",
+                      opacity: 0.95,
+                    }}
+                  >
+                    Negative Prompt
+                  </label>
+                  <textarea
+                    value={negativePrompt()}
+                    onInput={(e) => setNegativePrompt(e.currentTarget.value)}
+                    placeholder="blurry, low-res, bad anatomy, extra fingers"
+                    rows={2}
+                    style={{
+                      width: "100%",
+                      resize: "vertical",
+                      padding: "12px",
+                      background: "rgba(255, 255, 255, 0.75)",
+                      color: "#111827",
+                      border: "1px solid rgba(0,0,0,0.1)",
+                      "border-radius": "8px",
+                      "font-size": "14px",
+                    }}
+                  />
+
+                  {/* Controls grid */}
+                  <div
+                    style={{
+                      display: "grid",
+                      gap: "12px",
+                      "grid-template-columns":
+                        "repeat(auto-fit, minmax(220px, 1fr))",
+                      margin: "16px 0 12px 0",
+                    }}
+                  >
+                    {/* Model */}
+                    <div>
+                      <label
+                        style={{
+                          display: "block",
+                          "font-size": "12px",
+                          opacity: 0.9,
+                          margin: "0 0 6px 0",
+                        }}
+                      >
+                        Model
+                      </label>
+                      <select
+                        value={model() ?? ""}
+                        onChange={(e) =>
+                          setModel(e.currentTarget.value || undefined)
+                        }
+                        style={{
+                          width: "100%",
+                          padding: "10px 12px",
+                          background: "rgba(255,255,255,0.9)",
+                          color: "#111827",
+                          border: "1px solid rgba(0,0,0,0.1)",
+                          "border-radius": "8px",
+                          "font-size": "14px",
+                        }}
+                      >
+                        <option value="">Model (optional)</option>
+                        <option value="sdxl">Stable Diffusion XL</option>
+                        <option value="sd15">Stable Diffusion 1.5</option>
+                      </select>
+                    </div>
+
+                    {/* Steps */}
+                    <div>
+                      <label
+                        style={{
+                          display: "block",
+                          "font-size": "12px",
+                          opacity: 0.9,
+                          margin: "0 0 6px 0",
+                        }}
+                      >
+                        Steps: {steps()}
+                      </label>
+                      <input
+                        type="range"
+                        min="1"
+                        max="150"
+                        value={String(steps() ?? 30)}
+                        onInput={(e) => {
+                          const val = parseInt(
+                            e.currentTarget.value || "0",
+                            10
+                          );
+                          setSteps(Number.isNaN(val) ? undefined : val);
+                        }}
+                        style={{ width: "100%" }}
+                      />
+                    </div>
+
+                    {/* CFG Scale */}
+                    <div>
+                      <label
+                        style={{
+                          display: "block",
+                          "font-size": "12px",
+                          opacity: 0.9,
+                          margin: "0 0 6px 0",
+                        }}
+                      >
+                        CFG Scale: {(cfgScale() ?? 7.5).toFixed(1)}
+                      </label>
+                      <input
+                        type="range"
+                        min="1"
+                        max="20"
+                        step="0.5"
+                        value={String(cfgScale() ?? 7.5)}
+                        onInput={(e) => {
+                          const val = parseFloat(
+                            e.currentTarget.value || "NaN"
+                          );
+                          setCfgScale(Number.isNaN(val) ? undefined : val);
+                        }}
+                        style={{ width: "100%" }}
+                      />
+                    </div>
+
+                    {/* Size */}
+                    <div>
+                      <label
+                        style={{
+                          display: "block",
+                          "font-size": "12px",
+                          opacity: 0.9,
+                          margin: "0 0 6px 0",
+                        }}
+                      >
+                        Size
+                      </label>
+                      <select
+                        value={
+                          width() && height() ? `${width()}x${height()}` : ""
+                        }
+                        onChange={(e) => {
+                          if (!e.currentTarget.value) {
+                            setWidth(undefined);
+                            setHeight(undefined);
+                            return;
+                          }
+                          const [w, h] = e.currentTarget.value
+                            .split("x")
+                            .map((v) => parseInt(v, 10));
+                          setWidth(Number.isNaN(w) ? undefined : w);
+                          setHeight(Number.isNaN(h) ? undefined : h);
+                        }}
+                        style={{
+                          width: "100%",
+                          padding: "10px 12px",
+                          background: "rgba(255,255,255,0.9)",
+                          color: "#111827",
+                          border: "1px solid rgba(0,0,0,0.1)",
+                          "border-radius": "8px",
+                          "font-size": "14px",
+                        }}
+                      >
+                        <option value="">Size (optional)</option>
+                        <option value="512x512">512 x 512</option>
+                        <option value="768x768">768 x 768</option>
+                        <option value="1024x1024">1024 x 1024</option>
+                        <option value="1152x896">1152 x 896</option>
+                        <option value="896x1152">896 x 1152</option>
+                      </select>
+                    </div>
+
+                    {/* Seed */}
+                    <div>
+                      <label
+                        style={{
+                          display: "block",
+                          "font-size": "12px",
+                          opacity: 0.9,
+                          margin: "0 0 6px 0",
+                        }}
+                      >
+                        Seed (optional)
+                      </label>
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        placeholder="Random"
+                        value={seed()}
+                        onInput={(e) => setSeed(e.currentTarget.value)}
+                        style={{
+                          width: "100%",
+                          padding: "10px 12px",
+                          background: "rgba(255,255,255,0.75)",
+                          color: "#111827",
+                          border: "1px solid rgba(0,0,0,0.1)",
+                          "border-radius": "8px",
+                          "font-size": "14px",
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </Show>
             </div>
-          </div>
+
+            <div
+              style={{
+                display: "flex",
+                gap: "12px",
+                "justify-content": "flex-end",
+                "margin-top": "8px",
+              }}
+            >
+              <button
+                type="button"
+                onClick={() => {
+                  setPrompt("");
+                  setNegativePrompt("");
+                  setModel("sdxl");
+                  setSteps(30);
+                  setCfgScale(7.5);
+                  setWidth(1024);
+                  setHeight(1024);
+                  setSeed("");
+                }}
+                style={{
+                  padding: "10px 16px",
+                  background: "transparent",
+                  color: "white",
+                  border: "1px solid rgba(255, 255, 255, 0.4)",
+                  "border-radius": "8px",
+                  cursor: "pointer",
+                }}
+              >
+                Reset
+              </button>
+
+              <button
+                type="submit"
+                disabled={!canSubmit()}
+                style={{
+                  padding: "10px 16px",
+                  background: canSubmit()
+                    ? "#10b981"
+                    : "rgba(16, 185, 129, 0.5)",
+                  color: "white",
+                  border: "none",
+                  "border-radius": "8px",
+                  cursor: canSubmit() ? "pointer" : "not-allowed",
+                  "font-weight": 600,
+                }}
+              >
+                <Show
+                  when={!generateImageMutation.isPending}
+                  fallback={"Generating..."}
+                >
+                  Generate
+                </Show>
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </Suspense>
