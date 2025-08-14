@@ -27,6 +27,23 @@ interface StableDiffusionAPI {
   // File dialogs
   selectProjectFolder: () => Promise<string | null>;
   selectNewProjectFolder: () => Promise<string | null>;
+
+  // Image generation
+  generateImage: (input: {
+    prompt: string;
+    negativePrompt?: string;
+    steps?: number;
+    cfgScale?: number;
+    width?: number;
+    height?: number;
+    seed?: string;
+    model?: string;
+  }) => Promise<{ id: number; imagePath: string }>;
+
+  // Realtime events
+  onGenerationCreated: (
+    handler: (payload: { id: number; imagePath: string }) => void
+  ) => () => void;
 }
 
 declare global {
@@ -62,6 +79,38 @@ const api = {
     ipcRenderer.invoke("select-project-folder"),
   selectNewProjectFolder: (): Promise<string | null> =>
     ipcRenderer.invoke("select-new-project-folder"),
+
+  // Image generation
+  generateImage: (input: {
+    prompt: string;
+    negativePrompt?: string;
+    steps?: number;
+    cfgScale?: number;
+    width?: number;
+    height?: number;
+    seed?: string;
+    model?: string;
+  }): Promise<{ id: number; imagePath: string }> =>
+    ipcRenderer.invoke("generate-image", input),
+
+  // Realtime events
+  onGenerationCreated: (
+    handler: (payload: { id: number; imagePath: string }) => void
+  ) => {
+    const channel = "generation-created";
+    const listener = (
+      _event: unknown,
+      payload: { id: number; imagePath: string }
+    ) => {
+      try {
+        handler(payload);
+      } catch (err) {
+        console.error("onGenerationCreated handler error:", err);
+      }
+    };
+    ipcRenderer.on(channel, listener as any);
+    return () => ipcRenderer.removeListener(channel, listener as any);
+  },
 };
 
 // Use `contextBridge` APIs to expose Electron APIs to

@@ -1,5 +1,12 @@
 import { createFileRoute, redirect } from "@tanstack/solid-router";
-import { Suspense, createMemo, createSignal, Show } from "solid-js";
+import {
+  Suspense,
+  createMemo,
+  createSignal,
+  Show,
+  onCleanup,
+  onMount,
+} from "solid-js";
 import { useMutation } from "@tanstack/solid-query";
 
 // Workspace route with project query parameter
@@ -64,6 +71,10 @@ function Workspace() {
   const [seed, setSeed] = createSignal("");
   const [showAdvanced, setShowAdvanced] = createSignal(false);
 
+  const [latestImagePath, setLatestImagePath] = createSignal<string | null>(
+    null
+  );
+
   const generateImageMutation = useMutation(() => ({
     mutationFn: async (input: {
       prompt: string;
@@ -76,16 +87,31 @@ function Workspace() {
       seed?: string;
       projectPath: string;
     }) => {
-      // Placeholder: wire to backend generation later
-      // eslint-disable-next-line no-console
-      console.log("Generate image with:", input);
-      await new Promise((r) => setTimeout(r, 500));
-      return { ok: true } as const;
+      const result = await window.api.generateImage({
+        prompt: input.prompt,
+        negativePrompt: input.negativePrompt,
+        steps: input.steps,
+        cfgScale: input.cfgScale,
+        width: input.width,
+        height: input.height,
+        seed: input.seed,
+        model: input.model,
+      });
+      setLatestImagePath(result.imagePath);
+      return result;
     },
     onError: (err) => {
       console.error("Error generating image:", err);
     },
   }));
+
+  // Subscribe to realtime generation-created events
+  onMount(() => {
+    const unsubscribe = window.api.onGenerationCreated(({ imagePath }) => {
+      setLatestImagePath(imagePath);
+    });
+    onCleanup(() => unsubscribe());
+  });
 
   const canSubmit = createMemo(
     () => prompt().trim().length > 0 && !generateImageMutation.isPending
@@ -626,6 +652,33 @@ function Workspace() {
                 </Show>
               </button>
             </div>
+
+            {/* Latest image preview */}
+            <Show when={latestImagePath()}>
+              <div style={{ margin: "16px 0 0 0" }}>
+                <div
+                  style={{
+                    "font-size": "12px",
+                    opacity: 0.85,
+                    "margin-bottom": "6px",
+                  }}
+                >
+                  Latest generation
+                </div>
+                <img
+                  src={`file://${latestImagePath()}`}
+                  alt="Latest generation"
+                  style={{
+                    width: "100%",
+                    "max-height": "480px",
+                    "object-fit": "contain",
+                    background: "rgba(255,255,255,0.15)",
+                    border: "1px solid rgba(255,255,255,0.25)",
+                    "border-radius": "8px",
+                  }}
+                />
+              </div>
+            </Show>
           </form>
         </div>
       </div>

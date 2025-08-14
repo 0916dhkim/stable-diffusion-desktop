@@ -205,6 +205,152 @@ app.whenReady().then(async () => {
     return result.filePaths[0];
   });
 
+  // Image generation (SD 3.5) IPC handler
+  ipcMain.handle(
+    "generate-image",
+    async (
+      _,
+      input: {
+        prompt: string;
+        negativePrompt?: string;
+        steps?: number;
+        cfgScale?: number;
+        width?: number;
+        height?: number;
+        seed?: string;
+        model?: string;
+      }
+    ): Promise<{ id: number; imagePath: string }> => {
+      // Validate API key
+      const config = await loadConfig();
+      const apiKey = config.apiKey?.trim();
+      if (!apiKey) {
+        throw new Error("API key is not set. Please add it in Settings.");
+      }
+
+      // Validate project context
+      const project = await projectManager.getCurrentProject();
+      const imagesDir = projectManager.getImagesDirectory();
+      if (!project || !imagesDir) {
+        throw new Error("No project is open.");
+      }
+
+      // Map size to aspect_ratio expected by SD 3.5
+      const toAspectRatio = (w?: number, h?: number): string => {
+        if (!w || !h) return "1:1";
+        if (w === h) return "1:1";
+        if (w === 1152 && h === 896) return "9:7";
+        if (w === 896 && h === 1152) return "7:9";
+        const ratio = w / h;
+        // Closest common ratios
+        const candidates: Array<{ r: number; s: string }> = [
+          { r: 16 / 9, s: "16:9" },
+          { r: 9 / 16, s: "9:16" },
+          { r: 4 / 3, s: "4:3" },
+          { r: 3 / 4, s: "3:4" },
+          { r: 3 / 2, s: "3:2" },
+          { r: 2 / 3, s: "2:3" },
+          { r: 5 / 4, s: "5:4" },
+          { r: 4 / 5, s: "4:5" },
+        ];
+        let best = candidates[0];
+        let bestDiff = Math.abs(ratio - best.r);
+        for (let i = 1; i < candidates.length; i++) {
+          const diff = Math.abs(ratio - candidates[i].r);
+          if (diff < bestDiff) {
+            best = candidates[i];
+            bestDiff = diff;
+          }
+        }
+        return best.s;
+      };
+
+      // Build request form
+      const aspectRatio = toAspectRatio(input.width, input.height);
+      const model = input.model?.trim() || "sd3.5-large";
+
+      // Use global fetch/FormData with loose typing to avoid DOM lib dependency
+      const fetchApi = (global as any).fetch as (
+        input: any,
+        init?: any
+      ) => Promise<any>;
+      const FormDataCtor = (global as any).FormData as any;
+
+      if (!fetchApi || !FormDataCtor) {
+        throw new Error("Fetch/FormData not available in main process.");
+      }
+
+      const form = new FormDataCtor();
+      form.set("prompt", input.prompt);
+      if (input.negativePrompt)
+        form.set("negative_prompt", input.negativePrompt);
+      if (input.seed && input.seed.trim().length > 0) {
+        form.set("seed", String(parseInt(input.seed, 10)));
+      }
+      form.set("output_format", "png");
+      form.set("model", model);
+      form.set("aspect_ratio", aspectRatio);
+
+      const response = await fetchApi(
+        "https://api.stability.ai/v2beta/stable-image/generate/sd3",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            Accept: "image/*",
+          },
+          body: form,
+        }
+      );
+
+      if (!response.ok) {
+        const msg = await response.text().catch(() => "");
+        throw new Error(`Generation failed (${response.status}): ${msg}`);
+      }
+
+      const arrayBuf = await response.arrayBuffer();
+      const buffer = Buffer.from(arrayBuf);
+
+      // Save the image to disk
+      const pad = (n: number) => String(n).padStart(2, "0");
+      const now = new Date();
+      const name = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(
+        now.getDate()
+      )}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(
+        now.getSeconds()
+      )}_${Math.random().toString(36).slice(2, 8)}.png`;
+      const imagePath = join(imagesDir, name);
+      await fs.writeFile(imagePath, buffer);
+
+      // Record in database
+      const id =
+        (await projectManager.addGeneration({
+          prompt: input.prompt,
+          negativePrompt: input.negativePrompt || null,
+          seed:
+            input.seed && input.seed.trim().length > 0
+              ? parseInt(input.seed, 10)
+              : null,
+          steps: input.steps ?? null,
+          guidance: input.cfgScale ?? null,
+          width: input.width ?? null,
+          height: input.height ?? null,
+          imagePath,
+        })) || 0;
+
+      // Notify renderers
+      for (const win of BrowserWindow.getAllWindows()) {
+        try {
+          win.webContents.send("generation-created", { id, imagePath });
+        } catch {
+          // noop
+        }
+      }
+
+      return { id, imagePath };
+    }
+  );
+
   createWindow();
 
   app.on("activate", function () {
