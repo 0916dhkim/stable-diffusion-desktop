@@ -46,13 +46,6 @@ export const Route = createFileRoute("/workspace")({
   component: Workspace,
 });
 
-interface Project {
-  name: string;
-  path: string;
-  createdAt: string;
-  lastOpened: string;
-}
-
 function Workspace() {
   const search = Route.useSearch();
   const navigate = Route.useNavigate();

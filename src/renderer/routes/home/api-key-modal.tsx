@@ -1,13 +1,14 @@
-import { createSignal, onMount } from "solid-js";
+import { createFileRoute } from "@tanstack/solid-router";
+import { createSignal } from "solid-js";
 
-interface Props {
-  isOpen: boolean;
-  onSubmit: (apiKey: string) => void;
-}
+export const Route = createFileRoute("/home/api-key-modal")({
+  component: ApiKeyModal,
+});
 
-export const ApiKeyModal = (props: Props) => {
+function ApiKeyModal() {
   const [apiKey, setApiKey] = createSignal("");
   const [isLoading, setIsLoading] = createSignal(false);
+  const navigate = Route.useNavigate();
 
   const handleSubmit = async (e: Event) => {
     e.preventDefault();
@@ -16,7 +17,10 @@ export const ApiKeyModal = (props: Props) => {
     if (key) {
       setIsLoading(true);
       try {
-        await props.onSubmit(key);
+        await window.api.setApiKey(key);
+        navigate({ to: "/" });
+      } catch (error) {
+        console.error("Error saving API key:", error);
       } finally {
         setIsLoading(false);
       }
@@ -32,7 +36,7 @@ export const ApiKeyModal = (props: Props) => {
         width: "100%",
         height: "100%",
         background: "rgba(0, 0, 0, 0.5)",
-        display: props.isOpen ? "flex" : "none",
+        display: "flex",
         "align-items": "center",
         "justify-content": "center",
         "z-index": "1000",
@@ -71,7 +75,6 @@ export const ApiKeyModal = (props: Props) => {
             obtain one from your Stable Diffusion provider.
           </p>
         </div>
-
         <form onSubmit={handleSubmit}>
           <div style={{ "margin-bottom": "24px" }}>
             <label
@@ -135,7 +138,6 @@ export const ApiKeyModal = (props: Props) => {
             </button>
           </div>
         </form>
-
         <div
           style={{
             "margin-top": "24px",
@@ -159,4 +161,4 @@ export const ApiKeyModal = (props: Props) => {
       </div>
     </div>
   );
-};
+}
