@@ -283,7 +283,7 @@ app.whenReady().then(async () => {
 
       // Build request form
       const aspectRatio = toAspectRatio(input.width, input.height);
-      const model = input.model?.trim() || "sd3.5-large";
+      const model = input.model?.trim();
 
       // Use global fetch/FormData with loose typing to avoid DOM lib dependency
       const fetchApi = (global as any).fetch as (

@@ -196,19 +196,97 @@ function Workspace() {
   };
 
   return (
-    <Suspense
-      fallback={
+    <div
+      class={css({
+        height: "100vh",
+        overflow: "auto",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+        color: "white",
+        fontFamily: "system-ui, -apple-system, sans-serif",
+      })}
+    >
+      {/* Header with project info and controls */}
+      <div
+        class={css({
+          alignSelf: "stretch",
+          padding: "16px 24px",
+          background: "rgba(255, 255, 255, 0.1)",
+          backdropFilter: "blur(10px)",
+          borderBottom: "1px solid rgba(255, 255, 255, 0.2)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        })}
+      >
         <div
           class={css({
-            height: "100vh",
             display: "flex",
             alignItems: "center",
-            justifyContent: "center",
-            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-            color: "white",
-            fontFamily: "system-ui, -apple-system, sans-serif",
+            gap: "16px",
           })}
         >
+          <h1
+            class={css({
+              margin: "0",
+              fontSize: "20px",
+              fontWeight: "600",
+            })}
+          >
+            {loaderData().name}
+          </h1>
+          <div
+            class={css({
+              padding: "4px 8px",
+              background: "rgba(255, 255, 255, 0.2)",
+              borderRadius: "4px",
+              fontSize: "12px",
+              fontWeight: "500",
+            })}
+          >
+            Project
+          </div>
+        </div>
+
+        <div class={css({ display: "flex", gap: "12px" })}>
+          <button
+            onClick={handleOpenSettings}
+            class={css({
+              padding: "8px 16px",
+              background: "rgba(255, 255, 255, 0.2)",
+              color: "white",
+              border: "1px solid rgba(255, 255, 255, 0.3)",
+              borderRadius: "6px",
+              fontSize: "14px",
+              cursor: "pointer",
+              transition: "all 0.2s",
+              "&:hover": { background: "rgba(255, 255, 255, 0.3)" },
+            })}
+          >
+            Settings
+          </button>
+          <button
+            onClick={handleCloseProject}
+            class={css({
+              padding: "8px 16px",
+              background: "rgba(239, 68, 68, 0.8)",
+              color: "white",
+              border: "1px solid rgba(239, 68, 68, 0.5)",
+              borderRadius: "6px",
+              fontSize: "14px",
+              cursor: "pointer",
+              transition: "all 0.2s",
+              "&:hover": { background: "rgba(239, 68, 68, 1)" },
+            })}
+          >
+            Close Project
+          </button>
+        </div>
+      </div>
+      <Suspense
+        fallback={
           <div class={css({ textAlign: "center" })}>
             <div
               class={css({
@@ -231,623 +309,549 @@ function Workspace() {
               `}
             </style>
           </div>
-        </div>
-      }
-    >
-      <div
-        class={css({
-          height: "100vh",
-          display: "flex",
-          flexDirection: "column",
-          background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-          color: "white",
-          fontFamily: "system-ui, -apple-system, sans-serif",
-        })}
+        }
       >
-        {/* Header with project info and controls */}
-        <div
-          class={css({
-            padding: "16px 24px",
-            background: "rgba(255, 255, 255, 0.1)",
-            backdropFilter: "blur(10px)",
-            borderBottom: "1px solid rgba(255, 255, 255, 0.2)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-          })}
-        >
+        <>
+          {/* Main content area */}
           <div
             class={css({
+              flex: "1",
               display: "flex",
-              alignItems: "center",
-              gap: "16px",
+              padding: "32px",
+              gap: "24px",
+              alignItems: "flex-start",
+              justifyContent: "center",
             })}
           >
-            <h1
-              class={css({
-                margin: "0",
-                fontSize: "20px",
-                fontWeight: "600",
-              })}
-            >
-              {loaderData().name}
-            </h1>
-            <div
-              class={css({
-                padding: "4px 8px",
-                background: "rgba(255, 255, 255, 0.2)",
-                borderRadius: "4px",
-                fontSize: "12px",
-                fontWeight: "500",
-              })}
-            >
-              Project
-            </div>
-          </div>
-
-          <div class={css({ display: "flex", gap: "12px" })}>
-            <button
-              onClick={handleOpenSettings}
-              class={css({
-                padding: "8px 16px",
-                background: "rgba(255, 255, 255, 0.2)",
-                color: "white",
-                border: "1px solid rgba(255, 255, 255, 0.3)",
-                borderRadius: "6px",
-                fontSize: "14px",
-                cursor: "pointer",
-                transition: "all 0.2s",
-                "&:hover": { background: "rgba(255, 255, 255, 0.3)" },
-              })}
-            >
-              Settings
-            </button>
-            <button
-              onClick={handleCloseProject}
-              class={css({
-                padding: "8px 16px",
-                background: "rgba(239, 68, 68, 0.8)",
-                color: "white",
-                border: "1px solid rgba(239, 68, 68, 0.5)",
-                borderRadius: "6px",
-                fontSize: "14px",
-                cursor: "pointer",
-                transition: "all 0.2s",
-                "&:hover": { background: "rgba(239, 68, 68, 1)" },
-              })}
-            >
-              Close Project
-            </button>
-          </div>
-        </div>
-
-        {/* Main content area */}
-        <div
-          class={css({
-            flex: "1",
-            display: "flex",
-            padding: "32px",
-            gap: "24px",
-            alignItems: "flex-start",
-            justifyContent: "center",
-          })}
-        >
-          {/* Prompt form */}
-          <form
-            onSubmit={handleSubmit}
-            class={css({
-              width: "100%",
-              maxWidth: "860px",
-              background: "rgba(255, 255, 255, 0.1)",
-              backdropFilter: "blur(10px)",
-              borderRadius: "12px",
-              padding: "24px",
-              border: "1px solid rgba(255, 255, 255, 0.2)",
-            })}
-          >
-            <div
-              class={css({
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "baseline",
-                marginBottom: "12px",
-              })}
-            >
-              <h2 class={css({ margin: 0, fontSize: "20px", fontWeight: 600 })}>
-                Image Generation
-              </h2>
-              <div class={css({ opacity: 0.8, fontSize: "12px" })}>
-                {loaderData().name}
-              </div>
-            </div>
-
-            {/* Prompt */}
-            <label
-              class={css({
-                display: "block",
-                fontSize: "14px",
-                fontWeight: 500,
-                margin: "12px 0 6px 0",
-                opacity: 0.95,
-              })}
-            >
-              Prompt
-            </label>
-            <textarea
-              value={search().prompt}
-              onInput={(e) =>
-                navigate({
-                  search: (prev) => ({
-                    ...prev,
-                    prompt: e.currentTarget.value,
-                  }),
-                })
-              }
-              placeholder="A cinematic portrait of a cyberpunk samurai, dramatic lighting, 35mm film"
-              rows={3}
+            {/* Prompt form */}
+            <form
+              onSubmit={handleSubmit}
               class={css({
                 width: "100%",
-                resize: "vertical",
-                padding: "12px",
-                background: "rgba(255, 255, 255, 0.9)",
-                color: "#111827",
-                border: "1px solid rgba(0,0,0,0.1)",
-                borderRadius: "8px",
-                fontSize: "14px",
-              })}
-            />
-
-            {/* Advanced options toggle */}
-            <div class={css({ margin: "16px 0 12px 0" })}>
-              <button
-                type="button"
-                aria-expanded={showAdvanced() ? "true" : "false"}
-                onClick={() => setShowAdvanced((v) => !v)}
-                class={css({
-                  width: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  gap: "8px",
-                  padding: "8px 12px",
-                  background: "transparent",
-                  color: "white",
-                  border: "1px solid rgba(255, 255, 255, 0.4)",
-                  borderRadius: "8px",
-                  cursor: "pointer",
-                })}
-              >
-                <span class={css({ fontWeight: 600, fontSize: "14px" })}>
-                  Advanced options
-                </span>
-                <span class={css({ opacity: 0.9, fontSize: "12px" })}>
-                  {showAdvanced() ? "Hide" : "Show"}
-                </span>
-              </button>
-
-              <Show when={showAdvanced()}>
-                <div class={css({ margin: "12px 0 0 0" })}>
-                  {/* Negative Prompt */}
-                  <label
-                    class={css({
-                      display: "block",
-                      fontSize: "14px",
-                      fontWeight: 500,
-                      margin: "0 0 6px 0",
-                      opacity: 0.95,
-                    })}
-                  >
-                    Negative Prompt
-                  </label>
-                  <textarea
-                    value={search().negativePrompt ?? ""}
-                    onInput={(e) =>
-                      navigate({
-                        search: (prev) => ({
-                          ...prev,
-                          negativePrompt: e.currentTarget.value,
-                        }),
-                      })
-                    }
-                    placeholder="blurry, low-res, bad anatomy, extra fingers"
-                    rows={2}
-                    class={css({
-                      width: "100%",
-                      resize: "vertical",
-                      padding: "12px",
-                      background: "rgba(255, 255, 255, 0.75)",
-                      color: "#111827",
-                      border: "1px solid rgba(0,0,0,0.1)",
-                      borderRadius: "8px",
-                      fontSize: "14px",
-                    })}
-                  />
-
-                  {/* Controls grid */}
-                  <div
-                    class={css({
-                      display: "grid",
-                      gap: "12px",
-                      gridTemplateColumns:
-                        "repeat(auto-fit, minmax(220px, 1fr))",
-                      margin: "16px 0 12px 0",
-                    })}
-                  >
-                    {/* Model */}
-                    <div>
-                      <label
-                        class={css({
-                          display: "block",
-                          fontSize: "12px",
-                          opacity: 0.9,
-                          margin: "0 0 6px 0",
-                        })}
-                      >
-                        Model
-                      </label>
-                      <select
-                        value={search().model ?? ""}
-                        onChange={(e) =>
-                          navigate({
-                            search: (prev) => ({
-                              ...prev,
-                              model: e.currentTarget.value,
-                            }),
-                          })
-                        }
-                        class={css({
-                          width: "100%",
-                          padding: "10px 12px",
-                          background: "rgba(255,255,255,0.9)",
-                          color: "#111827",
-                          border: "1px solid rgba(0,0,0,0.1)",
-                          borderRadius: "8px",
-                          fontSize: "14px",
-                        })}
-                      >
-                        <option value="">Model (optional)</option>
-                        <option value="sdxl">Stable Diffusion XL</option>
-                        <option value="sd15">Stable Diffusion 1.5</option>
-                      </select>
-                    </div>
-
-                    {/* Steps */}
-                    <div>
-                      <label
-                        class={css({
-                          display: "block",
-                          fontSize: "12px",
-                          opacity: 0.9,
-                          margin: "0 0 6px 0",
-                        })}
-                      >
-                        Steps: {search().steps}
-                      </label>
-                      <input
-                        type="range"
-                        min="1"
-                        max="150"
-                        value={String(search().steps)}
-                        onInput={(e) =>
-                          navigate({
-                            search: (prev) => ({
-                              ...prev,
-                              steps: Number(e.currentTarget.value),
-                            }),
-                          })
-                        }
-                        class={css({ width: "100%" })}
-                      />
-                    </div>
-
-                    {/* CFG Scale */}
-                    <div>
-                      <label
-                        class={css({
-                          display: "block",
-                          fontSize: "12px",
-                          opacity: 0.9,
-                          margin: "0 0 6px 0",
-                        })}
-                      >
-                        CFG Scale: {search().cfgScale.toFixed(1)}
-                      </label>
-                      <input
-                        type="range"
-                        min="1"
-                        max="20"
-                        step="0.5"
-                        value={String(search().cfgScale)}
-                        onInput={(e) =>
-                          navigate({
-                            search: (prev) => ({
-                              ...prev,
-                              cfgScale: Number(e.currentTarget.value),
-                            }),
-                          })
-                        }
-                        class={css({ width: "100%" })}
-                      />
-                    </div>
-
-                    {/* Size */}
-                    <div>
-                      <label
-                        class={css({
-                          display: "block",
-                          fontSize: "12px",
-                          opacity: 0.9,
-                          margin: "0 0 6px 0",
-                        })}
-                      >
-                        Size
-                      </label>
-                      <select
-                        value={
-                          search().width && search().height
-                            ? `${search().width}x${search().height}`
-                            : ""
-                        }
-                        onChange={(e) => {
-                          if (!e.currentTarget.value) {
-                            navigate({
-                              search: (prev) => ({
-                                ...prev,
-                                width: undefined,
-                                height: undefined,
-                              }),
-                            });
-                            return;
-                          }
-                          const [w, h] = e.currentTarget.value
-                            .split("x")
-                            .map((v) => parseInt(v, 10));
-                          navigate({
-                            search: (prev) => ({
-                              ...prev,
-                              width: w,
-                              height: h,
-                            }),
-                          });
-                        }}
-                        class={css({
-                          width: "100%",
-                          padding: "10px 12px",
-                          background: "rgba(255,255,255,0.9)",
-                          color: "#111827",
-                          border: "1px solid rgba(0,0,0,0.1)",
-                          borderRadius: "8px",
-                          fontSize: "14px",
-                        })}
-                      >
-                        <option value="">Size (optional)</option>
-                        <option value="512x512">512 x 512</option>
-                        <option value="768x768">768 x 768</option>
-                        <option value="1024x1024">1024 x 1024</option>
-                        <option value="1152x896">1152 x 896</option>
-                        <option value="896x1152">896 x 1152</option>
-                      </select>
-                    </div>
-
-                    {/* Seed */}
-                    <div>
-                      <label
-                        class={css({
-                          display: "block",
-                          fontSize: "12px",
-                          opacity: 0.9,
-                          margin: "0 0 6px 0",
-                        })}
-                      >
-                        Seed (optional)
-                      </label>
-                      <input
-                        type="text"
-                        inputMode="numeric"
-                        placeholder="Random"
-                        value={search().seed ?? ""}
-                        onInput={(e) =>
-                          navigate({
-                            search: (prev) => ({
-                              ...prev,
-                              seed: e.currentTarget.value,
-                            }),
-                          })
-                        }
-                        class={css({
-                          width: "100%",
-                          padding: "10px 12px",
-                          background: "rgba(255,255,255,0.75)",
-                          color: "#111827",
-                          border: "1px solid rgba(0,0,0,0.1)",
-                          borderRadius: "8px",
-                          fontSize: "14px",
-                        })}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </Show>
-            </div>
-
-            <div
-              class={css({
-                display: "flex",
-                gap: "12px",
-                justifyContent: "flex-end",
-                marginTop: "8px",
+                maxWidth: "860px",
+                background: "rgba(255, 255, 255, 0.1)",
+                backdropFilter: "blur(10px)",
+                borderRadius: "12px",
+                padding: "24px",
+                border: "1px solid rgba(255, 255, 255, 0.2)",
               })}
             >
-              <Link
-                to="/workspace"
-                search={{
-                  project: search().project,
-                  prompt: "",
-                }}
-                class={css({
-                  padding: "10px 16px",
-                  background: "transparent",
-                  color: "white",
-                  border: "1px solid rgba(255, 255, 255, 0.4)",
-                  borderRadius: "8px",
-                  cursor: "pointer",
-                })}
-              >
-                Reset
-              </Link>
-
-              <button
-                type="submit"
-                disabled={!canSubmit()}
-                class={clsx(
-                  css({
-                    padding: "10px 16px",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "8px",
-                    fontWeight: 600,
-                  }),
-                  canSubmit()
-                    ? css({
-                        background: "#10b981",
-                        cursor: "pointer",
-                        "&:hover": { background: "#059669" },
-                      })
-                    : css({
-                        background: "rgba(16, 185, 129, 0.5)",
-                        cursor: "not-allowed",
-                      })
-                )}
-              >
-                <Show
-                  when={!generateImageMutation.isPending}
-                  fallback={"Generating..."}
-                >
-                  Generate
-                </Show>
-              </button>
-            </div>
-
-            {/* Latest image preview */}
-            <Show when={latestImagePath()}>
-              <div class={css({ margin: "16px 0 0 0" })}>
-                <div
-                  class={css({
-                    fontSize: "12px",
-                    opacity: 0.85,
-                    marginBottom: "6px",
-                  })}
-                >
-                  Latest generation
-                </div>
-                <img
-                  // src={`media://${latestImagePath()}`}
-                  src={filePathToMediaUrl(latestImagePath()!)}
-                  alt="Latest generation"
-                  class={css({
-                    width: "100%",
-                    maxHeight: "480px",
-                    objectFit: "contain",
-                    background: "rgba(255,255,255,0.15)",
-                    border: "1px solid rgba(255,255,255,0.25)",
-                    borderRadius: "8px",
-                  })}
-                />
-              </div>
-            </Show>
-
-            {/* History grid */}
-            <div class={css({ margin: "20px 0 0 0" })}>
               <div
                 class={css({
                   display: "flex",
                   justifyContent: "space-between",
-                  alignItems: "center",
-                  marginBottom: "8px",
+                  alignItems: "baseline",
+                  marginBottom: "12px",
                 })}
               >
-                <div class={css({ fontSize: "12px", opacity: 0.85 })}>
-                  Recent generations
+                <h2
+                  class={css({ margin: 0, fontSize: "20px", fontWeight: 600 })}
+                >
+                  Image Generation
+                </h2>
+                <div class={css({ opacity: 0.8, fontSize: "12px" })}>
+                  {loaderData().name}
                 </div>
+              </div>
+
+              {/* Prompt */}
+              <label
+                class={css({
+                  display: "block",
+                  fontSize: "14px",
+                  fontWeight: 500,
+                  margin: "12px 0 6px 0",
+                  opacity: 0.95,
+                })}
+              >
+                Prompt
+              </label>
+              <textarea
+                value={search().prompt}
+                onInput={(e) =>
+                  navigate({
+                    search: (prev) => ({
+                      ...prev,
+                      prompt: e.currentTarget.value,
+                    }),
+                  })
+                }
+                placeholder="A cinematic portrait of a cyberpunk samurai, dramatic lighting, 35mm film"
+                rows={3}
+                class={css({
+                  width: "100%",
+                  resize: "vertical",
+                  padding: "12px",
+                  background: "rgba(255, 255, 255, 0.9)",
+                  color: "#111827",
+                  border: "1px solid rgba(0,0,0,0.1)",
+                  borderRadius: "8px",
+                  fontSize: "14px",
+                })}
+              />
+
+              {/* Advanced options toggle */}
+              <div class={css({ margin: "16px 0 12px 0" })}>
                 <button
                   type="button"
-                  onClick={() => void loadHistory()}
+                  aria-expanded={showAdvanced() ? "true" : "false"}
+                  onClick={() => setShowAdvanced((v) => !v)}
                   class={css({
-                    padding: "6px 10px",
-                    background: "rgba(255, 255, 255, 0.15)",
+                    width: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: "8px",
+                    padding: "8px 12px",
+                    background: "transparent",
                     color: "white",
-                    border: "1px solid rgba(255, 255, 255, 0.25)",
-                    borderRadius: "6px",
+                    border: "1px solid rgba(255, 255, 255, 0.4)",
+                    borderRadius: "8px",
                     cursor: "pointer",
-                    fontSize: "12px",
                   })}
                 >
-                  Refresh
+                  <span class={css({ fontWeight: 600, fontSize: "14px" })}>
+                    Advanced options
+                  </span>
+                  <span class={css({ opacity: 0.9, fontSize: "12px" })}>
+                    {showAdvanced() ? "Hide" : "Show"}
+                  </span>
                 </button>
-              </div>
-              <Show
-                when={history().length > 0}
-                fallback={
-                  <div class={css({ opacity: 0.8 })}>No images yet</div>
-                }
-              >
-                <div
-                  class={css({
-                    display: "grid",
-                    gap: "10px",
-                    gridTemplateColumns:
-                      "repeat(auto-fill, minmax(140px, 1fr))",
-                  })}
-                >
-                  <For each={history()}>
-                    {(item) => (
-                      <Link
-                        to="/workspace/image"
-                        search={(prev) => ({
-                          ...prev,
-                          project: projectPath,
-                          image: String(item.id),
-                        })}
-                        class={css({
-                          background: "rgba(255,255,255,0.12)",
-                          border: "1px solid rgba(255,255,255,0.2)",
-                          borderRadius: "8px",
-                          overflow: "hidden",
-                        })}
-                      >
-                        <img
-                          src={filePathToMediaUrl(item.imagePath)}
-                          alt={item.prompt}
+
+                <Show when={showAdvanced()}>
+                  <div class={css({ margin: "12px 0 0 0" })}>
+                    {/* Negative Prompt */}
+                    <label
+                      class={css({
+                        display: "block",
+                        fontSize: "14px",
+                        fontWeight: 500,
+                        margin: "0 0 6px 0",
+                        opacity: 0.95,
+                      })}
+                    >
+                      Negative Prompt
+                    </label>
+                    <textarea
+                      value={search().negativePrompt ?? ""}
+                      onInput={(e) =>
+                        navigate({
+                          search: (prev) => ({
+                            ...prev,
+                            negativePrompt: e.currentTarget.value,
+                          }),
+                        })
+                      }
+                      placeholder="blurry, low-res, bad anatomy, extra fingers"
+                      rows={2}
+                      class={css({
+                        width: "100%",
+                        resize: "vertical",
+                        padding: "12px",
+                        background: "rgba(255, 255, 255, 0.75)",
+                        color: "#111827",
+                        border: "1px solid rgba(0,0,0,0.1)",
+                        borderRadius: "8px",
+                        fontSize: "14px",
+                      })}
+                    />
+
+                    {/* Controls grid */}
+                    <div
+                      class={css({
+                        display: "grid",
+                        gap: "12px",
+                        gridTemplateColumns:
+                          "repeat(auto-fit, minmax(220px, 1fr))",
+                        margin: "16px 0 12px 0",
+                      })}
+                    >
+                      {/* Model */}
+                      <div>
+                        <label
+                          class={css({
+                            display: "block",
+                            fontSize: "12px",
+                            opacity: 0.9,
+                            margin: "0 0 6px 0",
+                          })}
+                        >
+                          Model
+                        </label>
+                        <select
+                          value={search().model ?? ""}
+                          onChange={(e) =>
+                            navigate({
+                              search: (prev) => ({
+                                ...prev,
+                                model: e.currentTarget.value,
+                              }),
+                            })
+                          }
                           class={css({
                             width: "100%",
-                            height: "140px",
-                            objectFit: "cover",
+                            padding: "10px 12px",
+                            background: "rgba(255,255,255,0.9)",
+                            color: "#111827",
+                            border: "1px solid rgba(0,0,0,0.1)",
+                            borderRadius: "8px",
+                            fontSize: "14px",
+                          })}
+                        >
+                          <option value="">Model (optional)</option>
+                          <option value="sd3.5-large">
+                            Large (6.5 credits)
+                          </option>
+                          <option value="sd3.5-large-turbo">
+                            Large Turbo (4 credits)
+                          </option>
+                          <option value="sd3.5-medium">
+                            Medium (3.5 credits)
+                          </option>
+                          <option value="sd3.5-flash">
+                            Flash (2.5 credits)
+                          </option>
+                        </select>
+                      </div>
+
+                      {/* Steps */}
+                      <div>
+                        <label
+                          class={css({
                             display: "block",
-                            background: "rgba(255,255,255,0.1)",
+                            fontSize: "12px",
+                            opacity: 0.9,
+                            margin: "0 0 6px 0",
+                          })}
+                        >
+                          Steps: {search().steps}
+                        </label>
+                        <input
+                          type="range"
+                          min="1"
+                          max="150"
+                          value={String(search().steps)}
+                          onInput={(e) =>
+                            navigate({
+                              search: (prev) => ({
+                                ...prev,
+                                steps: Number(e.currentTarget.value),
+                              }),
+                            })
+                          }
+                          class={css({ width: "100%" })}
+                        />
+                      </div>
+
+                      {/* CFG Scale */}
+                      <div>
+                        <label
+                          class={css({
+                            display: "block",
+                            fontSize: "12px",
+                            opacity: 0.9,
+                            margin: "0 0 6px 0",
+                          })}
+                        >
+                          CFG Scale: {search().cfgScale.toFixed(1)}
+                        </label>
+                        <input
+                          type="range"
+                          min="1"
+                          max="20"
+                          step="0.5"
+                          value={String(search().cfgScale)}
+                          onInput={(e) =>
+                            navigate({
+                              search: (prev) => ({
+                                ...prev,
+                                cfgScale: Number(e.currentTarget.value),
+                              }),
+                            })
+                          }
+                          class={css({ width: "100%" })}
+                        />
+                      </div>
+
+                      {/* Size */}
+                      <div>
+                        <label
+                          class={css({
+                            display: "block",
+                            fontSize: "12px",
+                            opacity: 0.9,
+                            margin: "0 0 6px 0",
+                          })}
+                        >
+                          Size
+                        </label>
+                        <select
+                          value={
+                            search().width && search().height
+                              ? `${search().width}x${search().height}`
+                              : ""
+                          }
+                          onChange={(e) => {
+                            if (!e.currentTarget.value) {
+                              navigate({
+                                search: (prev) => ({
+                                  ...prev,
+                                  width: undefined,
+                                  height: undefined,
+                                }),
+                              });
+                              return;
+                            }
+                            const [w, h] = e.currentTarget.value
+                              .split("x")
+                              .map((v) => parseInt(v, 10));
+                            navigate({
+                              search: (prev) => ({
+                                ...prev,
+                                width: w,
+                                height: h,
+                              }),
+                            });
+                          }}
+                          class={css({
+                            width: "100%",
+                            padding: "10px 12px",
+                            background: "rgba(255,255,255,0.9)",
+                            color: "#111827",
+                            border: "1px solid rgba(0,0,0,0.1)",
+                            borderRadius: "8px",
+                            fontSize: "14px",
+                          })}
+                        >
+                          <option value="">Size (optional)</option>
+                          <option value="512x512">512 x 512</option>
+                          <option value="768x768">768 x 768</option>
+                          <option value="1024x1024">1024 x 1024</option>
+                          <option value="1152x896">1152 x 896</option>
+                          <option value="896x1152">896 x 1152</option>
+                        </select>
+                      </div>
+
+                      {/* Seed */}
+                      <div>
+                        <label
+                          class={css({
+                            display: "block",
+                            fontSize: "12px",
+                            opacity: 0.9,
+                            margin: "0 0 6px 0",
+                          })}
+                        >
+                          Seed (optional)
+                        </label>
+                        <input
+                          type="text"
+                          inputMode="numeric"
+                          placeholder="Random"
+                          value={search().seed ?? ""}
+                          onInput={(e) =>
+                            navigate({
+                              search: (prev) => ({
+                                ...prev,
+                                seed: e.currentTarget.value,
+                              }),
+                            })
+                          }
+                          class={css({
+                            width: "100%",
+                            padding: "10px 12px",
+                            background: "rgba(255,255,255,0.75)",
+                            color: "#111827",
+                            border: "1px solid rgba(0,0,0,0.1)",
+                            borderRadius: "8px",
+                            fontSize: "14px",
                           })}
                         />
-                        <div
-                          class={css({
-                            padding: "6px 8px",
-                            fontSize: "11px",
-                            opacity: 0.9,
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                          })}
-                          title={item.prompt}
-                        >
-                          {item.prompt}
-                        </div>
-                      </Link>
-                    )}
-                  </For>
+                      </div>
+                    </div>
+                  </div>
+                </Show>
+              </div>
+
+              <div
+                class={css({
+                  display: "flex",
+                  gap: "12px",
+                  justifyContent: "flex-end",
+                  marginTop: "8px",
+                })}
+              >
+                <Link
+                  to="/workspace"
+                  search={{
+                    project: search().project,
+                    prompt: "",
+                  }}
+                  class={css({
+                    padding: "10px 16px",
+                    background: "transparent",
+                    color: "white",
+                    border: "1px solid rgba(255, 255, 255, 0.4)",
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                  })}
+                >
+                  Reset
+                </Link>
+
+                <button
+                  type="submit"
+                  disabled={!canSubmit()}
+                  class={clsx(
+                    css({
+                      padding: "10px 16px",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "8px",
+                      fontWeight: 600,
+                    }),
+                    canSubmit()
+                      ? css({
+                          background: "#10b981",
+                          cursor: "pointer",
+                          "&:hover": { background: "#059669" },
+                        })
+                      : css({
+                          background: "rgba(16, 185, 129, 0.5)",
+                          cursor: "not-allowed",
+                        })
+                  )}
+                >
+                  <Show
+                    when={!generateImageMutation.isPending}
+                    fallback={"Generating..."}
+                  >
+                    Generate
+                  </Show>
+                </button>
+              </div>
+
+              {/* Latest image preview */}
+              <Show when={latestImagePath()}>
+                <div class={css({ margin: "16px 0 0 0" })}>
+                  <div
+                    class={css({
+                      fontSize: "12px",
+                      opacity: 0.85,
+                      marginBottom: "6px",
+                    })}
+                  >
+                    Latest generation
+                  </div>
+                  <img
+                    // src={`media://${latestImagePath()}`}
+                    src={filePathToMediaUrl(latestImagePath()!)}
+                    alt="Latest generation"
+                    class={css({
+                      width: "100%",
+                      maxHeight: "480px",
+                      objectFit: "contain",
+                      background: "rgba(255,255,255,0.15)",
+                      border: "1px solid rgba(255,255,255,0.25)",
+                      borderRadius: "8px",
+                    })}
+                  />
                 </div>
               </Show>
-            </div>
-          </form>
-        </div>
-      </div>
-    </Suspense>
+
+              {/* History grid */}
+              <div class={css({ margin: "20px 0 0 0" })}>
+                <div
+                  class={css({
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: "8px",
+                  })}
+                >
+                  <div class={css({ fontSize: "12px", opacity: 0.85 })}>
+                    Recent generations
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => void loadHistory()}
+                    class={css({
+                      padding: "6px 10px",
+                      background: "rgba(255, 255, 255, 0.15)",
+                      color: "white",
+                      border: "1px solid rgba(255, 255, 255, 0.25)",
+                      borderRadius: "6px",
+                      cursor: "pointer",
+                      fontSize: "12px",
+                    })}
+                  >
+                    Refresh
+                  </button>
+                </div>
+                <Show
+                  when={history().length > 0}
+                  fallback={
+                    <div class={css({ opacity: 0.8 })}>No images yet</div>
+                  }
+                >
+                  <div
+                    class={css({
+                      display: "grid",
+                      gap: "10px",
+                      gridTemplateColumns:
+                        "repeat(auto-fill, minmax(140px, 1fr))",
+                    })}
+                  >
+                    <For each={history()}>
+                      {(item) => (
+                        <Link
+                          to="/workspace/image"
+                          search={(prev) => ({
+                            ...prev,
+                            project: projectPath,
+                            image: String(item.id),
+                          })}
+                          class={css({
+                            background: "rgba(255,255,255,0.12)",
+                            border: "1px solid rgba(255,255,255,0.2)",
+                            borderRadius: "8px",
+                            overflow: "hidden",
+                          })}
+                        >
+                          <img
+                            src={filePathToMediaUrl(item.imagePath)}
+                            alt={item.prompt}
+                            class={css({
+                              width: "100%",
+                              height: "140px",
+                              objectFit: "cover",
+                              display: "block",
+                              background: "rgba(255,255,255,0.1)",
+                            })}
+                          />
+                          <div
+                            class={css({
+                              padding: "6px 8px",
+                              fontSize: "11px",
+                              opacity: 0.9,
+                              whiteSpace: "nowrap",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                            })}
+                            title={item.prompt}
+                          >
+                            {item.prompt}
+                          </div>
+                        </Link>
+                      )}
+                    </For>
+                  </div>
+                </Show>
+              </div>
+            </form>
+          </div>
+        </>
+      </Suspense>
+    </div>
   );
 }

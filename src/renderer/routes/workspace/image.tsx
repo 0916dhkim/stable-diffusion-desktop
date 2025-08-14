@@ -68,6 +68,7 @@ function ImageDetailsPage() {
     <div
       class={css({
         height: "100vh",
+        overflow: "auto",
         display: "flex",
         flexDirection: "column",
         background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
