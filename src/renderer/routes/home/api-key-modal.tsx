@@ -1,5 +1,6 @@
+import { useMutation } from "@tanstack/solid-query";
 import { createFileRoute } from "@tanstack/solid-router";
-import { createSignal } from "solid-js";
+import { createSignal, Match, Switch } from "solid-js";
 
 export const Route = createFileRoute("/home/api-key-modal")({
   component: ApiKeyModal,
@@ -7,24 +8,23 @@ export const Route = createFileRoute("/home/api-key-modal")({
 
 function ApiKeyModal() {
   const [apiKey, setApiKey] = createSignal("");
-  const [isLoading, setIsLoading] = createSignal(false);
+  const mutation = useMutation(() => ({
+    mutationFn: async (key: string) => {
+      await window.api.setApiKey(key);
+    },
+    onSuccess: () => {
+      navigate({ to: "/" });
+    },
+    onError: (e) => {
+      console.error("Error saving API key:", e);
+    },
+  }));
   const navigate = Route.useNavigate();
 
   const handleSubmit = async (e: Event) => {
     e.preventDefault();
     const key = apiKey().trim();
-
-    if (key) {
-      setIsLoading(true);
-      try {
-        await window.api.setApiKey(key);
-        navigate({ to: "/" });
-      } catch (error) {
-        console.error("Error saving API key:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
+    mutation.mutate(key);
   };
 
   return (
@@ -111,7 +111,7 @@ function ApiKeyModal() {
           <div style={{ display: "flex", gap: "12px" }}>
             <button
               type="submit"
-              disabled={!apiKey().trim() || isLoading()}
+              disabled={!apiKey().trim() || mutation.isPending}
               style={{
                 flex: "1",
                 padding: "12px 24px",
@@ -122,11 +122,11 @@ function ApiKeyModal() {
                 "font-size": "16px",
                 "font-weight": "500",
                 cursor: "pointer",
-                opacity: !apiKey().trim() || isLoading() ? "0.6" : "1",
+                opacity: !apiKey().trim() || mutation.isPending ? "0.6" : "1",
                 transition: "all 0.2s",
               }}
               onMouseEnter={(e) => {
-                if (!(!apiKey().trim() || isLoading())) {
+                if (!(!apiKey().trim() || mutation.isPending)) {
                   e.currentTarget.style.background = "#2563eb";
                 }
               }}
@@ -134,7 +134,9 @@ function ApiKeyModal() {
                 e.currentTarget.style.background = "#3b82f6";
               }}
             >
-              {isLoading() ? "Saving..." : "Save API Key"}
+              <Switch fallback="Saving...">
+                <Match when={mutation.isPending}>Save API Key</Match>
+              </Switch>
             </button>
           </div>
         </form>
