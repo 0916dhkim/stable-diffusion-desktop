@@ -16,6 +16,7 @@ import {
   bypassCspForMediaProtocol,
   registerMediaProtocolHandler,
 } from "../shared/media-protocol";
+import { Generation } from "../db/schema";
 
 const CONFIG_FILE_NAME = "config.json";
 
@@ -342,6 +343,7 @@ app.whenReady().then(async () => {
         (await projectManager.addGeneration({
           prompt: input.prompt,
           negativePrompt: input.negativePrompt || null,
+          model: input.model || null,
           seed:
             input.seed && input.seed.trim().length > 0
               ? parseInt(input.seed, 10)
@@ -377,6 +379,7 @@ app.whenReady().then(async () => {
         id: number;
         prompt: string;
         negativePrompt?: string | null;
+        model?: string | null;
         seed?: number | null;
         steps?: number | null;
         guidance?: number | null;
@@ -390,6 +393,15 @@ app.whenReady().then(async () => {
       const offset = input?.offset ?? 0;
       const results = await projectManager.getGenerations(limit, offset);
       return results;
+    }
+  );
+
+  // Generation details by ID
+  ipcMain.handle(
+    "get-generation-by-id",
+    async (_, id: number): Promise<Generation | null> => {
+      const record = await projectManager.getGenerationById(id);
+      return record;
     }
   );
 

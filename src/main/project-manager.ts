@@ -4,26 +4,13 @@ import { drizzle } from "drizzle-orm/libsql";
 import { existsSync, mkdirSync } from "fs";
 import { basename, join } from "path";
 import { migrate } from "../db/migrate";
-import { generations, projectInfo } from "../db/schema";
+import { Generation, generations, projectInfo } from "../db/schema";
 
 export interface Project {
   name: string;
   path: string;
   createdAt: string;
   lastOpened: string;
-}
-
-export interface GenerationRecord {
-  id: number;
-  prompt: string;
-  negativePrompt?: string | null;
-  seed?: number | null;
-  steps?: number | null;
-  guidance?: number | null;
-  width?: number | null;
-  height?: number | null;
-  imagePath: string;
-  createdAt: string;
 }
 
 class ProjectManager {
@@ -197,7 +184,7 @@ class ProjectManager {
 
   // Add a generation record
   async addGeneration(
-    record: Omit<GenerationRecord, "id" | "createdAt">
+    record: Omit<Generation, "id" | "createdAt">
   ): Promise<number | null> {
     if (!this.db) {
       throw new Error("No project is currently open");
@@ -209,6 +196,7 @@ class ProjectManager {
         .values({
           prompt: record.prompt,
           negativePrompt: record.negativePrompt || null,
+          model: record.model || null,
           seed: record.seed || null,
           steps: record.steps || null,
           guidance: record.guidance || null,
@@ -229,7 +217,7 @@ class ProjectManager {
   async getGenerations(
     limit: number = 50,
     offset: number = 0
-  ): Promise<GenerationRecord[]> {
+  ): Promise<Generation[]> {
     if (!this.db) {
       return [];
     }
@@ -246,6 +234,7 @@ class ProjectManager {
         id: result.id,
         prompt: result.prompt,
         negativePrompt: result.negativePrompt,
+        model: result.model,
         seed: result.seed,
         steps: result.steps,
         guidance: result.guidance,
@@ -257,6 +246,37 @@ class ProjectManager {
     } catch (error) {
       console.error("Error getting generations:", error);
       return [];
+    }
+  }
+
+  // Get a single generation by ID
+  async getGenerationById(id: number): Promise<Generation | null> {
+    if (!this.db) {
+      return null;
+    }
+    try {
+      const results = await this.db
+        .select()
+        .from(generations)
+        .where(eq(generations.id, id));
+      const result = results[0];
+      if (!result) return null;
+      return {
+        id: result.id,
+        prompt: result.prompt,
+        negativePrompt: result.negativePrompt,
+        model: result.model,
+        seed: result.seed,
+        steps: result.steps,
+        guidance: result.guidance,
+        width: result.width,
+        height: result.height,
+        imagePath: result.imagePath,
+        createdAt: result.createdAt,
+      };
+    } catch (error) {
+      console.error("Error getting generation by id:", error);
+      return null;
     }
   }
 

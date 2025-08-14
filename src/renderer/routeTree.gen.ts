@@ -9,17 +9,13 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as WorkspaceRouteImport } from './routes/workspace'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as WorkspaceIndexRouteImport } from './routes/workspace/index'
+import { Route as WorkspaceImageRouteImport } from './routes/workspace/image'
 import { Route as HomeApiKeyModalRouteImport } from './routes/home/api-key-modal'
 
-const WorkspaceRoute = WorkspaceRouteImport.update({
-  id: '/workspace',
-  path: '/workspace',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -35,6 +31,16 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const WorkspaceIndexRoute = WorkspaceIndexRouteImport.update({
+  id: '/workspace/',
+  path: '/workspace/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WorkspaceImageRoute = WorkspaceImageRouteImport.update({
+  id: '/workspace/image',
+  path: '/workspace/image',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HomeApiKeyModalRoute = HomeApiKeyModalRouteImport.update({
   id: '/api-key-modal',
   path: '/api-key-modal',
@@ -45,54 +51,64 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/home': typeof HomeRouteWithChildren
   '/settings': typeof SettingsRoute
-  '/workspace': typeof WorkspaceRoute
   '/home/api-key-modal': typeof HomeApiKeyModalRoute
+  '/workspace/image': typeof WorkspaceImageRoute
+  '/workspace': typeof WorkspaceIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/home': typeof HomeRouteWithChildren
   '/settings': typeof SettingsRoute
-  '/workspace': typeof WorkspaceRoute
   '/home/api-key-modal': typeof HomeApiKeyModalRoute
+  '/workspace/image': typeof WorkspaceImageRoute
+  '/workspace': typeof WorkspaceIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/home': typeof HomeRouteWithChildren
   '/settings': typeof SettingsRoute
-  '/workspace': typeof WorkspaceRoute
   '/home/api-key-modal': typeof HomeApiKeyModalRoute
+  '/workspace/image': typeof WorkspaceImageRoute
+  '/workspace/': typeof WorkspaceIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/home' | '/settings' | '/workspace' | '/home/api-key-modal'
+  fullPaths:
+    | '/'
+    | '/home'
+    | '/settings'
+    | '/home/api-key-modal'
+    | '/workspace/image'
+    | '/workspace'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/home' | '/settings' | '/workspace' | '/home/api-key-modal'
+  to:
+    | '/'
+    | '/home'
+    | '/settings'
+    | '/home/api-key-modal'
+    | '/workspace/image'
+    | '/workspace'
   id:
     | '__root__'
     | '/'
     | '/home'
     | '/settings'
-    | '/workspace'
     | '/home/api-key-modal'
+    | '/workspace/image'
+    | '/workspace/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   HomeRoute: typeof HomeRouteWithChildren
   SettingsRoute: typeof SettingsRoute
-  WorkspaceRoute: typeof WorkspaceRoute
+  WorkspaceImageRoute: typeof WorkspaceImageRoute
+  WorkspaceIndexRoute: typeof WorkspaceIndexRoute
 }
 
 declare module '@tanstack/solid-router' {
   interface FileRoutesByPath {
-    '/workspace': {
-      id: '/workspace'
-      path: '/workspace'
-      fullPath: '/workspace'
-      preLoaderRoute: typeof WorkspaceRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/settings': {
       id: '/settings'
       path: '/settings'
@@ -112,6 +128,20 @@ declare module '@tanstack/solid-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/workspace/': {
+      id: '/workspace/'
+      path: '/workspace'
+      fullPath: '/workspace'
+      preLoaderRoute: typeof WorkspaceIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/workspace/image': {
+      id: '/workspace/image'
+      path: '/workspace/image'
+      fullPath: '/workspace/image'
+      preLoaderRoute: typeof WorkspaceImageRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/home/api-key-modal': {
@@ -138,7 +168,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   HomeRoute: HomeRouteWithChildren,
   SettingsRoute: SettingsRoute,
-  WorkspaceRoute: WorkspaceRoute,
+  WorkspaceImageRoute: WorkspaceImageRoute,
+  WorkspaceIndexRoute: WorkspaceIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from "@tanstack/solid-router";
+import { createFileRoute, Link, redirect } from "@tanstack/solid-router";
 import { css } from "@flow-css/core/css";
 import { clsx } from "clsx";
 import {
@@ -11,15 +11,29 @@ import {
   For,
 } from "solid-js";
 import { useMutation } from "@tanstack/solid-query";
-import { filePathToMediaUrl } from "../../shared/media-protocol";
+import { showToast } from "../../toast";
+import { filePathToMediaUrl } from "../../../shared/media-protocol";
+import { z } from "zod";
+
+const FormSchema = z.object({
+  prompt: z.string().optional().default(""),
+  negativePrompt: z.string().optional(),
+  model: z.string().optional(),
+  steps: z.number().optional().default(30),
+  cfgScale: z.number().optional().default(7.5),
+  width: z.number().optional(),
+  height: z.number().optional(),
+  seed: z.string().optional(),
+});
+const SearchSchema = z
+  .object({
+    project: z.string(),
+  })
+  .and(FormSchema);
 
 // Workspace route with project query parameter
-export const Route = createFileRoute("/workspace")({
-  validateSearch: (search: Record<string, unknown>) => {
-    return {
-      project: (search.project as string) || "",
-    };
-  },
+export const Route = createFileRoute("/workspace/")({
+  validateSearch: SearchSchema,
   beforeLoad: async ({ search }) => {
     // Check API key first
     const hasApiKey = await window.api.hasApiKey();
@@ -64,17 +78,7 @@ function Workspace() {
   const loaderData = Route.useLoaderData();
   const projectPath = search().project;
 
-  // Image prompt form state
-  const [prompt, setPrompt] = createSignal("");
-  const [negativePrompt, setNegativePrompt] = createSignal("");
-  const [model, setModel] = createSignal<string | undefined>(undefined);
-  const [steps, setSteps] = createSignal<number | undefined>(undefined);
-  const [cfgScale, setCfgScale] = createSignal<number | undefined>(undefined);
-  const [width, setWidth] = createSignal<number | undefined>(undefined);
-  const [height, setHeight] = createSignal<number | undefined>(undefined);
-  const [seed, setSeed] = createSignal("");
   const [showAdvanced, setShowAdvanced] = createSignal(false);
-
   const [latestImagePath, setLatestImagePath] = createSignal<string | null>(
     null
   );
@@ -108,32 +112,44 @@ function Workspace() {
   };
 
   const generateImageMutation = useMutation(() => ({
-    mutationFn: async (input: {
-      prompt: string;
-      negativePrompt?: string;
-      model?: string;
-      steps?: number;
-      cfgScale?: number;
-      width?: number;
-      height?: number;
-      seed?: string;
-      projectPath: string;
-    }) => {
-      const result = await window.api.generateImage({
-        prompt: input.prompt,
-        negativePrompt: input.negativePrompt,
-        steps: input.steps,
-        cfgScale: input.cfgScale,
-        width: input.width,
-        height: input.height,
-        seed: input.seed,
-        model: input.model,
-      });
+    mutationFn: async (
+      input: {
+        projectPath: string;
+      } & z.infer<typeof FormSchema>
+    ) => {
+      const result = await window.api.generateImage(input);
       setLatestImagePath(result.imagePath);
       return result;
     },
     onError: (err) => {
       console.error("Error generating image:", err);
+      const msg = (() => {
+        if (!err) return "";
+        if (err instanceof Error) return err.message;
+        if (typeof err === "string") return err;
+        try {
+          return JSON.stringify(err);
+        } catch {
+          return "An error occurred";
+        }
+      })();
+
+      const lower = msg.toLowerCase();
+      const isInsufficientCredit =
+        lower.includes("insufficient") ||
+        lower.includes("no credit") ||
+        lower.includes("insufficient credit") ||
+        lower.includes("payment required") ||
+        lower.includes("402");
+
+      if (isInsufficientCredit) {
+        showToast(
+          "Generation failed: insufficient credits. Please top up your Stability account.",
+          { type: "error", durationMs: 6000 }
+        );
+      } else {
+        showToast(msg || "Failed to generate image.", { type: "error" });
+      }
     },
   }));
 
@@ -149,21 +165,14 @@ function Workspace() {
   });
 
   const canSubmit = createMemo(
-    () => prompt().trim().length > 0 && !generateImageMutation.isPending
+    () => search().prompt.trim().length > 0 && !generateImageMutation.isPending
   );
 
   const handleSubmit = async (e: Event) => {
     e.preventDefault();
     if (!canSubmit()) return;
     generateImageMutation.mutate({
-      prompt: prompt().trim(),
-      negativePrompt: negativePrompt().trim() || undefined,
-      model: model(),
-      steps: steps(),
-      cfgScale: cfgScale(),
-      width: width(),
-      height: height(),
-      seed: seed().trim() || undefined,
+      ...search(),
       projectPath,
     });
   };
@@ -365,8 +374,15 @@ function Workspace() {
               Prompt
             </label>
             <textarea
-              value={prompt()}
-              onInput={(e) => setPrompt(e.currentTarget.value)}
+              value={search().prompt}
+              onInput={(e) =>
+                navigate({
+                  search: (prev) => ({
+                    ...prev,
+                    prompt: e.currentTarget.value,
+                  }),
+                })
+              }
               placeholder="A cinematic portrait of a cyberpunk samurai, dramatic lighting, 35mm film"
               rows={3}
               class={css({
@@ -424,8 +440,15 @@ function Workspace() {
                     Negative Prompt
                   </label>
                   <textarea
-                    value={negativePrompt()}
-                    onInput={(e) => setNegativePrompt(e.currentTarget.value)}
+                    value={search().negativePrompt ?? ""}
+                    onInput={(e) =>
+                      navigate({
+                        search: (prev) => ({
+                          ...prev,
+                          negativePrompt: e.currentTarget.value,
+                        }),
+                      })
+                    }
                     placeholder="blurry, low-res, bad anatomy, extra fingers"
                     rows={2}
                     class={css({
@@ -463,9 +486,14 @@ function Workspace() {
                         Model
                       </label>
                       <select
-                        value={model() ?? ""}
+                        value={search().model ?? ""}
                         onChange={(e) =>
-                          setModel(e.currentTarget.value || undefined)
+                          navigate({
+                            search: (prev) => ({
+                              ...prev,
+                              model: e.currentTarget.value,
+                            }),
+                          })
                         }
                         class={css({
                           width: "100%",
@@ -493,20 +521,21 @@ function Workspace() {
                           margin: "0 0 6px 0",
                         })}
                       >
-                        Steps: {steps()}
+                        Steps: {search().steps}
                       </label>
                       <input
                         type="range"
                         min="1"
                         max="150"
-                        value={String(steps() ?? 30)}
-                        onInput={(e) => {
-                          const val = parseInt(
-                            e.currentTarget.value || "0",
-                            10
-                          );
-                          setSteps(Number.isNaN(val) ? undefined : val);
-                        }}
+                        value={String(search().steps)}
+                        onInput={(e) =>
+                          navigate({
+                            search: (prev) => ({
+                              ...prev,
+                              steps: Number(e.currentTarget.value),
+                            }),
+                          })
+                        }
                         class={css({ width: "100%" })}
                       />
                     </div>
@@ -521,20 +550,22 @@ function Workspace() {
                           margin: "0 0 6px 0",
                         })}
                       >
-                        CFG Scale: {(cfgScale() ?? 7.5).toFixed(1)}
+                        CFG Scale: {search().cfgScale.toFixed(1)}
                       </label>
                       <input
                         type="range"
                         min="1"
                         max="20"
                         step="0.5"
-                        value={String(cfgScale() ?? 7.5)}
-                        onInput={(e) => {
-                          const val = parseFloat(
-                            e.currentTarget.value || "NaN"
-                          );
-                          setCfgScale(Number.isNaN(val) ? undefined : val);
-                        }}
+                        value={String(search().cfgScale)}
+                        onInput={(e) =>
+                          navigate({
+                            search: (prev) => ({
+                              ...prev,
+                              cfgScale: Number(e.currentTarget.value),
+                            }),
+                          })
+                        }
                         class={css({ width: "100%" })}
                       />
                     </div>
@@ -553,19 +584,31 @@ function Workspace() {
                       </label>
                       <select
                         value={
-                          width() && height() ? `${width()}x${height()}` : ""
+                          search().width && search().height
+                            ? `${search().width}x${search().height}`
+                            : ""
                         }
                         onChange={(e) => {
                           if (!e.currentTarget.value) {
-                            setWidth(undefined);
-                            setHeight(undefined);
+                            navigate({
+                              search: (prev) => ({
+                                ...prev,
+                                width: undefined,
+                                height: undefined,
+                              }),
+                            });
                             return;
                           }
                           const [w, h] = e.currentTarget.value
                             .split("x")
                             .map((v) => parseInt(v, 10));
-                          setWidth(Number.isNaN(w) ? undefined : w);
-                          setHeight(Number.isNaN(h) ? undefined : h);
+                          navigate({
+                            search: (prev) => ({
+                              ...prev,
+                              width: w,
+                              height: h,
+                            }),
+                          });
                         }}
                         class={css({
                           width: "100%",
@@ -602,8 +645,15 @@ function Workspace() {
                         type="text"
                         inputMode="numeric"
                         placeholder="Random"
-                        value={seed()}
-                        onInput={(e) => setSeed(e.currentTarget.value)}
+                        value={search().seed ?? ""}
+                        onInput={(e) =>
+                          navigate({
+                            search: (prev) => ({
+                              ...prev,
+                              seed: e.currentTarget.value,
+                            }),
+                          })
+                        }
                         class={css({
                           width: "100%",
                           padding: "10px 12px",
@@ -628,17 +678,11 @@ function Workspace() {
                 marginTop: "8px",
               })}
             >
-              <button
-                type="button"
-                onClick={() => {
-                  setPrompt("");
-                  setNegativePrompt("");
-                  setModel("sdxl");
-                  setSteps(30);
-                  setCfgScale(7.5);
-                  setWidth(1024);
-                  setHeight(1024);
-                  setSeed("");
+              <Link
+                to="/workspace"
+                search={{
+                  project: search().project,
+                  prompt: "",
                 }}
                 class={css({
                   padding: "10px 16px",
@@ -650,7 +694,7 @@ function Workspace() {
                 })}
               >
                 Reset
-              </button>
+              </Link>
 
               <button
                 type="submit"
@@ -757,7 +801,13 @@ function Workspace() {
                 >
                   <For each={history()}>
                     {(item) => (
-                      <div
+                      <Link
+                        to="/workspace/image"
+                        search={(prev) => ({
+                          ...prev,
+                          project: projectPath,
+                          image: String(item.id),
+                        })}
                         class={css({
                           background: "rgba(255,255,255,0.12)",
                           border: "1px solid rgba(255,255,255,0.2)",
@@ -766,7 +816,6 @@ function Workspace() {
                         })}
                       >
                         <img
-                          // src={`media://${item.imagePath}`}
                           src={filePathToMediaUrl(item.imagePath)}
                           alt={item.prompt}
                           class={css({
@@ -790,7 +839,7 @@ function Workspace() {
                         >
                           {item.prompt}
                         </div>
-                      </div>
+                      </Link>
                     )}
                   </For>
                 </div>

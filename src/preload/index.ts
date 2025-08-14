@@ -1,6 +1,7 @@
 import { contextBridge, ipcRenderer } from "electron";
 import { ElectronAPI } from "@electron-toolkit/preload";
 import { electronAPI } from "@electron-toolkit/preload";
+import { Generation } from "../db/schema";
 
 interface Project {
   name: string;
@@ -46,6 +47,7 @@ interface StableDiffusionAPI {
       id: number;
       prompt: string;
       negativePrompt?: string | null;
+      model?: string | null;
       seed?: number | null;
       steps?: number | null;
       guidance?: number | null;
@@ -55,6 +57,9 @@ interface StableDiffusionAPI {
       createdAt: string;
     }>
   >;
+
+  // Single generation
+  getGenerationById: (id: number) => Promise<Generation | null>;
 
   // Realtime events
   onGenerationCreated: (
@@ -112,6 +117,10 @@ const api = {
   // History
   getGenerations: (input?: { limit?: number; offset?: number }) =>
     ipcRenderer.invoke("get-generations", input),
+
+  // Single generation
+  getGenerationById: (id: number) =>
+    ipcRenderer.invoke("get-generation-by-id", id),
 
   // Realtime events
   onGenerationCreated: (
