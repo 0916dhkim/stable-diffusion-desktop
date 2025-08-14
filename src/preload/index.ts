@@ -40,6 +40,22 @@ interface StableDiffusionAPI {
     model?: string;
   }) => Promise<{ id: number; imagePath: string }>;
 
+  // History
+  getGenerations: (input?: { limit?: number; offset?: number }) => Promise<
+    Array<{
+      id: number;
+      prompt: string;
+      negativePrompt?: string | null;
+      seed?: number | null;
+      steps?: number | null;
+      guidance?: number | null;
+      width?: number | null;
+      height?: number | null;
+      imagePath: string;
+      createdAt: string;
+    }>
+  >;
+
   // Realtime events
   onGenerationCreated: (
     handler: (payload: { id: number; imagePath: string }) => void
@@ -92,6 +108,10 @@ const api = {
     model?: string;
   }): Promise<{ id: number; imagePath: string }> =>
     ipcRenderer.invoke("generate-image", input),
+
+  // History
+  getGenerations: (input?: { limit?: number; offset?: number }) =>
+    ipcRenderer.invoke("get-generations", input),
 
   // Realtime events
   onGenerationCreated: (

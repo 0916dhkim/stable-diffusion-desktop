@@ -1,11 +1,25 @@
-import { app, shell, BrowserWindow, ipcMain, dialog } from "electron";
+import {
+  net,
+  app,
+  shell,
+  BrowserWindow,
+  ipcMain,
+  dialog,
+  protocol,
+} from "electron";
 import { join } from "path";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import { promises as fs } from "fs";
 import { existsSync } from "fs";
 import { projectManager, Project } from "./project-manager";
+import {
+  bypassCspForMediaProtocol,
+  registerMediaProtocolHandler,
+} from "../shared/media-protocol";
 
 const CONFIG_FILE_NAME = "config.json";
+
+bypassCspForMediaProtocol(protocol);
 
 function createWindow(): void {
   // Create the browser window.
@@ -97,6 +111,7 @@ const addToRecentProjects = async (projectPath: string): Promise<void> => {
 };
 
 app.whenReady().then(async () => {
+  registerMediaProtocolHandler(protocol, net);
   // Set app user model id for windows
   electronApp.setAppUserModelId("com.electron");
 
@@ -348,6 +363,33 @@ app.whenReady().then(async () => {
       }
 
       return { id, imagePath };
+    }
+  );
+
+  // Generation history
+  ipcMain.handle(
+    "get-generations",
+    async (
+      _,
+      input?: { limit?: number; offset?: number }
+    ): Promise<
+      Array<{
+        id: number;
+        prompt: string;
+        negativePrompt?: string | null;
+        seed?: number | null;
+        steps?: number | null;
+        guidance?: number | null;
+        width?: number | null;
+        height?: number | null;
+        imagePath: string;
+        createdAt: string;
+      }>
+    > => {
+      const limit = input?.limit ?? 50;
+      const offset = input?.offset ?? 0;
+      const results = await projectManager.getGenerations(limit, offset);
+      return results;
     }
   );
 

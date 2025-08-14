@@ -6,8 +6,10 @@ import {
   Show,
   onCleanup,
   onMount,
+  For,
 } from "solid-js";
 import { useMutation } from "@tanstack/solid-query";
+import { filePathToMediaUrl } from "../../shared/media-protocol";
 
 // Workspace route with project query parameter
 export const Route = createFileRoute("/workspace")({
@@ -75,6 +77,34 @@ function Workspace() {
     null
   );
 
+  const [history, setHistory] = createSignal<
+    Array<{
+      id: number;
+      imagePath: string;
+      prompt: string;
+      createdAt: string;
+    }>
+  >([]);
+
+  const loadHistory = async () => {
+    try {
+      const items = await window.api.getGenerations({ limit: 60, offset: 0 });
+      setHistory(
+        items.map((g) => ({
+          id: g.id,
+          imagePath: g.imagePath,
+          prompt: g.prompt,
+          createdAt: g.createdAt,
+        }))
+      );
+      if (!latestImagePath() && items[0]?.imagePath) {
+        setLatestImagePath(items[0].imagePath);
+      }
+    } catch (err) {
+      console.error("Error loading history:", err);
+    }
+  };
+
   const generateImageMutation = useMutation(() => ({
     mutationFn: async (input: {
       prompt: string;
@@ -107,8 +137,11 @@ function Workspace() {
 
   // Subscribe to realtime generation-created events
   onMount(() => {
+    loadHistory();
     const unsubscribe = window.api.onGenerationCreated(({ imagePath }) => {
       setLatestImagePath(imagePath);
+      // Refresh history on new generation
+      void loadHistory();
     });
     onCleanup(() => unsubscribe());
   });
@@ -666,7 +699,8 @@ function Workspace() {
                   Latest generation
                 </div>
                 <img
-                  src={`file://${latestImagePath()}`}
+                  // src={`media://${latestImagePath()}`}
+                  src={filePathToMediaUrl(latestImagePath()!)}
                   alt="Latest generation"
                   style={{
                     width: "100%",
@@ -679,6 +713,89 @@ function Workspace() {
                 />
               </div>
             </Show>
+
+            {/* History grid */}
+            <div style={{ margin: "20px 0 0 0" }}>
+              <div
+                style={{
+                  display: "flex",
+                  "justify-content": "space-between",
+                  "align-items": "center",
+                  "margin-bottom": "8px",
+                }}
+              >
+                <div style={{ "font-size": "12px", opacity: 0.85 }}>
+                  Recent generations
+                </div>
+                <button
+                  type="button"
+                  onClick={() => void loadHistory()}
+                  style={{
+                    padding: "6px 10px",
+                    background: "rgba(255, 255, 255, 0.15)",
+                    color: "white",
+                    border: "1px solid rgba(255, 255, 255, 0.25)",
+                    "border-radius": "6px",
+                    cursor: "pointer",
+                    "font-size": "12px",
+                  }}
+                >
+                  Refresh
+                </button>
+              </div>
+              <Show
+                when={history().length > 0}
+                fallback={<div style={{ opacity: 0.8 }}>No images yet</div>}
+              >
+                <div
+                  style={{
+                    display: "grid",
+                    gap: "10px",
+                    "grid-template-columns":
+                      "repeat(auto-fill, minmax(140px, 1fr))",
+                  }}
+                >
+                  <For each={history()}>
+                    {(item) => (
+                      <div
+                        style={{
+                          background: "rgba(255,255,255,0.12)",
+                          border: "1px solid rgba(255,255,255,0.2)",
+                          "border-radius": "8px",
+                          overflow: "hidden",
+                        }}
+                      >
+                        <img
+                          // src={`media://${item.imagePath}`}
+                          src={filePathToMediaUrl(item.imagePath)}
+                          alt={item.prompt}
+                          style={{
+                            width: "100%",
+                            height: "140px",
+                            "object-fit": "cover",
+                            display: "block",
+                            background: "rgba(255,255,255,0.1)",
+                          }}
+                        />
+                        <div
+                          style={{
+                            padding: "6px 8px",
+                            "font-size": "11px",
+                            opacity: 0.9,
+                            "white-space": "nowrap",
+                            overflow: "hidden",
+                            "text-overflow": "ellipsis",
+                          }}
+                          title={item.prompt}
+                        >
+                          {item.prompt}
+                        </div>
+                      </div>
+                    )}
+                  </For>
+                </div>
+              </Show>
+            </div>
           </form>
         </div>
       </div>
