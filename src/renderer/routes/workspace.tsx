@@ -1,4 +1,6 @@
 import { createFileRoute, redirect } from "@tanstack/solid-router";
+import { css } from "@flow-css/core/css";
+import { clsx } from "clsx";
 import {
   Suspense,
   createMemo,
@@ -188,27 +190,27 @@ function Workspace() {
     <Suspense
       fallback={
         <div
-          style={{
+          class={css({
             height: "100vh",
             display: "flex",
-            "align-items": "center",
-            "justify-content": "center",
+            alignItems: "center",
+            justifyContent: "center",
             background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
             color: "white",
-            "font-family": "system-ui, -apple-system, sans-serif",
-          }}
+            fontFamily: "system-ui, -apple-system, sans-serif",
+          })}
         >
-          <div style={{ "text-align": "center" }}>
+          <div class={css({ textAlign: "center" })}>
             <div
-              style={{
+              class={css({
                 width: "40px",
                 height: "40px",
                 border: "4px solid rgba(255, 255, 255, 0.3)",
-                "border-top": "4px solid white",
-                "border-radius": "50%",
+                borderTop: "4px solid white",
+                borderRadius: "50%",
                 animation: "spin 1s linear infinite",
                 margin: "0 auto 16px",
-              }}
+              })}
             />
             <p>Loading project...</p>
             <style>
@@ -224,96 +226,86 @@ function Workspace() {
       }
     >
       <div
-        style={{
+        class={css({
           height: "100vh",
           display: "flex",
-          "flex-direction": "column",
+          flexDirection: "column",
           background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
           color: "white",
-          "font-family": "system-ui, -apple-system, sans-serif",
-        }}
+          fontFamily: "system-ui, -apple-system, sans-serif",
+        })}
       >
         {/* Header with project info and controls */}
         <div
-          style={{
+          class={css({
             padding: "16px 24px",
             background: "rgba(255, 255, 255, 0.1)",
-            "backdrop-filter": "blur(10px)",
-            "border-bottom": "1px solid rgba(255, 255, 255, 0.2)",
+            backdropFilter: "blur(10px)",
+            borderBottom: "1px solid rgba(255, 255, 255, 0.2)",
             display: "flex",
-            "align-items": "center",
-            "justify-content": "space-between",
-          }}
+            alignItems: "center",
+            justifyContent: "space-between",
+          })}
         >
           <div
-            style={{
+            class={css({
               display: "flex",
-              "align-items": "center",
+              alignItems: "center",
               gap: "16px",
-            }}
+            })}
           >
             <h1
-              style={{
+              class={css({
                 margin: "0",
-                "font-size": "20px",
-                "font-weight": "600",
-              }}
+                fontSize: "20px",
+                fontWeight: "600",
+              })}
             >
               {loaderData().name}
             </h1>
             <div
-              style={{
+              class={css({
                 padding: "4px 8px",
                 background: "rgba(255, 255, 255, 0.2)",
-                "border-radius": "4px",
-                "font-size": "12px",
-                "font-weight": "500",
-              }}
+                borderRadius: "4px",
+                fontSize: "12px",
+                fontWeight: "500",
+              })}
             >
               Project
             </div>
           </div>
 
-          <div style={{ display: "flex", gap: "12px" }}>
+          <div class={css({ display: "flex", gap: "12px" })}>
             <button
               onClick={handleOpenSettings}
-              style={{
+              class={css({
                 padding: "8px 16px",
                 background: "rgba(255, 255, 255, 0.2)",
                 color: "white",
                 border: "1px solid rgba(255, 255, 255, 0.3)",
-                "border-radius": "6px",
-                "font-size": "14px",
+                borderRadius: "6px",
+                fontSize: "14px",
                 cursor: "pointer",
                 transition: "all 0.2s",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = "rgba(255, 255, 255, 0.3)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = "rgba(255, 255, 255, 0.2)";
-              }}
+                "&:hover": { background: "rgba(255, 255, 255, 0.3)" },
+              })}
             >
               Settings
             </button>
             <button
               onClick={handleCloseProject}
-              style={{
+              class={css({
                 padding: "8px 16px",
                 background: "rgba(239, 68, 68, 0.8)",
                 color: "white",
                 border: "1px solid rgba(239, 68, 68, 0.5)",
-                "border-radius": "6px",
-                "font-size": "14px",
+                borderRadius: "6px",
+                fontSize: "14px",
                 cursor: "pointer",
                 transition: "all 0.2s",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = "rgba(239, 68, 68, 1)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = "rgba(239, 68, 68, 0.8)";
-              }}
+                "&:hover": { background: "rgba(239, 68, 68, 1)" },
+              })}
             >
               Close Project
             </button>
@@ -322,55 +314,53 @@ function Workspace() {
 
         {/* Main content area */}
         <div
-          style={{
+          class={css({
             flex: "1",
             display: "flex",
             padding: "32px",
             gap: "24px",
-            "align-items": "flex-start",
-            "justify-content": "center",
-          }}
+            alignItems: "flex-start",
+            justifyContent: "center",
+          })}
         >
           {/* Prompt form */}
           <form
             onSubmit={handleSubmit}
-            style={{
+            class={css({
               width: "100%",
-              "max-width": "860px",
+              maxWidth: "860px",
               background: "rgba(255, 255, 255, 0.1)",
-              "backdrop-filter": "blur(10px)",
-              "border-radius": "12px",
+              backdropFilter: "blur(10px)",
+              borderRadius: "12px",
               padding: "24px",
               border: "1px solid rgba(255, 255, 255, 0.2)",
-            }}
+            })}
           >
             <div
-              style={{
+              class={css({
                 display: "flex",
-                "justify-content": "space-between",
-                "align-items": "baseline",
-                "margin-bottom": "12px",
-              }}
+                justifyContent: "space-between",
+                alignItems: "baseline",
+                marginBottom: "12px",
+              })}
             >
-              <h2
-                style={{ margin: 0, "font-size": "20px", "font-weight": 600 }}
-              >
+              <h2 class={css({ margin: 0, fontSize: "20px", fontWeight: 600 })}>
                 Image Generation
               </h2>
-              <div style={{ opacity: 0.8, "font-size": "12px" }}>
+              <div class={css({ opacity: 0.8, fontSize: "12px" })}>
                 {loaderData().name}
               </div>
             </div>
 
             {/* Prompt */}
             <label
-              style={{
+              class={css({
                 display: "block",
-                "font-size": "14px",
-                "font-weight": 500,
+                fontSize: "14px",
+                fontWeight: 500,
                 margin: "12px 0 6px 0",
                 opacity: 0.95,
-              }}
+              })}
             >
               Prompt
             </label>
@@ -379,57 +369,57 @@ function Workspace() {
               onInput={(e) => setPrompt(e.currentTarget.value)}
               placeholder="A cinematic portrait of a cyberpunk samurai, dramatic lighting, 35mm film"
               rows={3}
-              style={{
+              class={css({
                 width: "100%",
                 resize: "vertical",
                 padding: "12px",
                 background: "rgba(255, 255, 255, 0.9)",
                 color: "#111827",
                 border: "1px solid rgba(0,0,0,0.1)",
-                "border-radius": "8px",
-                "font-size": "14px",
-              }}
+                borderRadius: "8px",
+                fontSize: "14px",
+              })}
             />
 
             {/* Advanced options toggle */}
-            <div style={{ margin: "16px 0 12px 0" }}>
+            <div class={css({ margin: "16px 0 12px 0" })}>
               <button
                 type="button"
                 aria-expanded={showAdvanced() ? "true" : "false"}
                 onClick={() => setShowAdvanced((v) => !v)}
-                style={{
+                class={css({
                   width: "100%",
                   display: "flex",
-                  "align-items": "center",
-                  "justify-content": "space-between",
+                  alignItems: "center",
+                  justifyContent: "space-between",
                   gap: "8px",
                   padding: "8px 12px",
                   background: "transparent",
                   color: "white",
                   border: "1px solid rgba(255, 255, 255, 0.4)",
-                  "border-radius": "8px",
+                  borderRadius: "8px",
                   cursor: "pointer",
-                }}
+                })}
               >
-                <span style={{ "font-weight": 600, "font-size": "14px" }}>
+                <span class={css({ fontWeight: 600, fontSize: "14px" })}>
                   Advanced options
                 </span>
-                <span style={{ opacity: 0.9, "font-size": "12px" }}>
+                <span class={css({ opacity: 0.9, fontSize: "12px" })}>
                   {showAdvanced() ? "Hide" : "Show"}
                 </span>
               </button>
 
               <Show when={showAdvanced()}>
-                <div style={{ margin: "12px 0 0 0" }}>
+                <div class={css({ margin: "12px 0 0 0" })}>
                   {/* Negative Prompt */}
                   <label
-                    style={{
+                    class={css({
                       display: "block",
-                      "font-size": "14px",
-                      "font-weight": 500,
+                      fontSize: "14px",
+                      fontWeight: 500,
                       margin: "0 0 6px 0",
                       opacity: 0.95,
-                    }}
+                    })}
                   >
                     Negative Prompt
                   </label>
@@ -438,37 +428,37 @@ function Workspace() {
                     onInput={(e) => setNegativePrompt(e.currentTarget.value)}
                     placeholder="blurry, low-res, bad anatomy, extra fingers"
                     rows={2}
-                    style={{
+                    class={css({
                       width: "100%",
                       resize: "vertical",
                       padding: "12px",
                       background: "rgba(255, 255, 255, 0.75)",
                       color: "#111827",
                       border: "1px solid rgba(0,0,0,0.1)",
-                      "border-radius": "8px",
-                      "font-size": "14px",
-                    }}
+                      borderRadius: "8px",
+                      fontSize: "14px",
+                    })}
                   />
 
                   {/* Controls grid */}
                   <div
-                    style={{
+                    class={css({
                       display: "grid",
                       gap: "12px",
-                      "grid-template-columns":
+                      gridTemplateColumns:
                         "repeat(auto-fit, minmax(220px, 1fr))",
                       margin: "16px 0 12px 0",
-                    }}
+                    })}
                   >
                     {/* Model */}
                     <div>
                       <label
-                        style={{
+                        class={css({
                           display: "block",
-                          "font-size": "12px",
+                          fontSize: "12px",
                           opacity: 0.9,
                           margin: "0 0 6px 0",
-                        }}
+                        })}
                       >
                         Model
                       </label>
@@ -477,15 +467,15 @@ function Workspace() {
                         onChange={(e) =>
                           setModel(e.currentTarget.value || undefined)
                         }
-                        style={{
+                        class={css({
                           width: "100%",
                           padding: "10px 12px",
                           background: "rgba(255,255,255,0.9)",
                           color: "#111827",
                           border: "1px solid rgba(0,0,0,0.1)",
-                          "border-radius": "8px",
-                          "font-size": "14px",
-                        }}
+                          borderRadius: "8px",
+                          fontSize: "14px",
+                        })}
                       >
                         <option value="">Model (optional)</option>
                         <option value="sdxl">Stable Diffusion XL</option>
@@ -496,12 +486,12 @@ function Workspace() {
                     {/* Steps */}
                     <div>
                       <label
-                        style={{
+                        class={css({
                           display: "block",
-                          "font-size": "12px",
+                          fontSize: "12px",
                           opacity: 0.9,
                           margin: "0 0 6px 0",
-                        }}
+                        })}
                       >
                         Steps: {steps()}
                       </label>
@@ -517,19 +507,19 @@ function Workspace() {
                           );
                           setSteps(Number.isNaN(val) ? undefined : val);
                         }}
-                        style={{ width: "100%" }}
+                        class={css({ width: "100%" })}
                       />
                     </div>
 
                     {/* CFG Scale */}
                     <div>
                       <label
-                        style={{
+                        class={css({
                           display: "block",
-                          "font-size": "12px",
+                          fontSize: "12px",
                           opacity: 0.9,
                           margin: "0 0 6px 0",
-                        }}
+                        })}
                       >
                         CFG Scale: {(cfgScale() ?? 7.5).toFixed(1)}
                       </label>
@@ -545,19 +535,19 @@ function Workspace() {
                           );
                           setCfgScale(Number.isNaN(val) ? undefined : val);
                         }}
-                        style={{ width: "100%" }}
+                        class={css({ width: "100%" })}
                       />
                     </div>
 
                     {/* Size */}
                     <div>
                       <label
-                        style={{
+                        class={css({
                           display: "block",
-                          "font-size": "12px",
+                          fontSize: "12px",
                           opacity: 0.9,
                           margin: "0 0 6px 0",
-                        }}
+                        })}
                       >
                         Size
                       </label>
@@ -577,15 +567,15 @@ function Workspace() {
                           setWidth(Number.isNaN(w) ? undefined : w);
                           setHeight(Number.isNaN(h) ? undefined : h);
                         }}
-                        style={{
+                        class={css({
                           width: "100%",
                           padding: "10px 12px",
                           background: "rgba(255,255,255,0.9)",
                           color: "#111827",
                           border: "1px solid rgba(0,0,0,0.1)",
-                          "border-radius": "8px",
-                          "font-size": "14px",
-                        }}
+                          borderRadius: "8px",
+                          fontSize: "14px",
+                        })}
                       >
                         <option value="">Size (optional)</option>
                         <option value="512x512">512 x 512</option>
@@ -599,12 +589,12 @@ function Workspace() {
                     {/* Seed */}
                     <div>
                       <label
-                        style={{
+                        class={css({
                           display: "block",
-                          "font-size": "12px",
+                          fontSize: "12px",
                           opacity: 0.9,
                           margin: "0 0 6px 0",
-                        }}
+                        })}
                       >
                         Seed (optional)
                       </label>
@@ -614,15 +604,15 @@ function Workspace() {
                         placeholder="Random"
                         value={seed()}
                         onInput={(e) => setSeed(e.currentTarget.value)}
-                        style={{
+                        class={css({
                           width: "100%",
                           padding: "10px 12px",
                           background: "rgba(255,255,255,0.75)",
                           color: "#111827",
                           border: "1px solid rgba(0,0,0,0.1)",
-                          "border-radius": "8px",
-                          "font-size": "14px",
-                        }}
+                          borderRadius: "8px",
+                          fontSize: "14px",
+                        })}
                       />
                     </div>
                   </div>
@@ -631,12 +621,12 @@ function Workspace() {
             </div>
 
             <div
-              style={{
+              class={css({
                 display: "flex",
                 gap: "12px",
-                "justify-content": "flex-end",
-                "margin-top": "8px",
-              }}
+                justifyContent: "flex-end",
+                marginTop: "8px",
+              })}
             >
               <button
                 type="button"
@@ -650,14 +640,14 @@ function Workspace() {
                   setHeight(1024);
                   setSeed("");
                 }}
-                style={{
+                class={css({
                   padding: "10px 16px",
                   background: "transparent",
                   color: "white",
                   border: "1px solid rgba(255, 255, 255, 0.4)",
-                  "border-radius": "8px",
+                  borderRadius: "8px",
                   cursor: "pointer",
-                }}
+                })}
               >
                 Reset
               </button>
@@ -665,17 +655,25 @@ function Workspace() {
               <button
                 type="submit"
                 disabled={!canSubmit()}
-                style={{
-                  padding: "10px 16px",
-                  background: canSubmit()
-                    ? "#10b981"
-                    : "rgba(16, 185, 129, 0.5)",
-                  color: "white",
-                  border: "none",
-                  "border-radius": "8px",
-                  cursor: canSubmit() ? "pointer" : "not-allowed",
-                  "font-weight": 600,
-                }}
+                class={clsx(
+                  css({
+                    padding: "10px 16px",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "8px",
+                    fontWeight: 600,
+                  }),
+                  canSubmit()
+                    ? css({
+                        background: "#10b981",
+                        cursor: "pointer",
+                        "&:hover": { background: "#059669" },
+                      })
+                    : css({
+                        background: "rgba(16, 185, 129, 0.5)",
+                        cursor: "not-allowed",
+                      })
+                )}
               >
                 <Show
                   when={!generateImageMutation.isPending}
@@ -688,13 +686,13 @@ function Workspace() {
 
             {/* Latest image preview */}
             <Show when={latestImagePath()}>
-              <div style={{ margin: "16px 0 0 0" }}>
+              <div class={css({ margin: "16px 0 0 0" })}>
                 <div
-                  style={{
-                    "font-size": "12px",
+                  class={css({
+                    fontSize: "12px",
                     opacity: 0.85,
-                    "margin-bottom": "6px",
-                  }}
+                    marginBottom: "6px",
+                  })}
                 >
                   Latest generation
                 </div>
@@ -702,90 +700,92 @@ function Workspace() {
                   // src={`media://${latestImagePath()}`}
                   src={filePathToMediaUrl(latestImagePath()!)}
                   alt="Latest generation"
-                  style={{
+                  class={css({
                     width: "100%",
-                    "max-height": "480px",
-                    "object-fit": "contain",
+                    maxHeight: "480px",
+                    objectFit: "contain",
                     background: "rgba(255,255,255,0.15)",
                     border: "1px solid rgba(255,255,255,0.25)",
-                    "border-radius": "8px",
-                  }}
+                    borderRadius: "8px",
+                  })}
                 />
               </div>
             </Show>
 
             {/* History grid */}
-            <div style={{ margin: "20px 0 0 0" }}>
+            <div class={css({ margin: "20px 0 0 0" })}>
               <div
-                style={{
+                class={css({
                   display: "flex",
-                  "justify-content": "space-between",
-                  "align-items": "center",
-                  "margin-bottom": "8px",
-                }}
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginBottom: "8px",
+                })}
               >
-                <div style={{ "font-size": "12px", opacity: 0.85 }}>
+                <div class={css({ fontSize: "12px", opacity: 0.85 })}>
                   Recent generations
                 </div>
                 <button
                   type="button"
                   onClick={() => void loadHistory()}
-                  style={{
+                  class={css({
                     padding: "6px 10px",
                     background: "rgba(255, 255, 255, 0.15)",
                     color: "white",
                     border: "1px solid rgba(255, 255, 255, 0.25)",
-                    "border-radius": "6px",
+                    borderRadius: "6px",
                     cursor: "pointer",
-                    "font-size": "12px",
-                  }}
+                    fontSize: "12px",
+                  })}
                 >
                   Refresh
                 </button>
               </div>
               <Show
                 when={history().length > 0}
-                fallback={<div style={{ opacity: 0.8 }}>No images yet</div>}
+                fallback={
+                  <div class={css({ opacity: 0.8 })}>No images yet</div>
+                }
               >
                 <div
-                  style={{
+                  class={css({
                     display: "grid",
                     gap: "10px",
-                    "grid-template-columns":
+                    gridTemplateColumns:
                       "repeat(auto-fill, minmax(140px, 1fr))",
-                  }}
+                  })}
                 >
                   <For each={history()}>
                     {(item) => (
                       <div
-                        style={{
+                        class={css({
                           background: "rgba(255,255,255,0.12)",
                           border: "1px solid rgba(255,255,255,0.2)",
-                          "border-radius": "8px",
+                          borderRadius: "8px",
                           overflow: "hidden",
-                        }}
+                        })}
                       >
                         <img
                           // src={`media://${item.imagePath}`}
                           src={filePathToMediaUrl(item.imagePath)}
                           alt={item.prompt}
-                          style={{
+                          class={css({
                             width: "100%",
                             height: "140px",
-                            "object-fit": "cover",
+                            objectFit: "cover",
                             display: "block",
                             background: "rgba(255,255,255,0.1)",
-                          }}
+                          })}
                         />
                         <div
-                          style={{
+                          class={css({
                             padding: "6px 8px",
-                            "font-size": "11px",
+                            fontSize: "11px",
                             opacity: 0.9,
-                            "white-space": "nowrap",
+                            whiteSpace: "nowrap",
                             overflow: "hidden",
-                            "text-overflow": "ellipsis",
-                          }}
+                            textOverflow: "ellipsis",
+                          })}
                           title={item.prompt}
                         >
                           {item.prompt}

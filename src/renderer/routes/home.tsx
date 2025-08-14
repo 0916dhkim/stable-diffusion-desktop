@@ -1,7 +1,10 @@
 import { createFileRoute, Outlet } from "@tanstack/solid-router";
+import { clsx } from "clsx";
+import type {} from "react";
 import { useMutation } from "@tanstack/solid-query";
 import { For, Show, Suspense, createEffect, Match, Switch } from "solid-js";
 import { Project } from "../../main/project-manager";
+import { css } from "@flow-css/core/css";
 
 export const Route = createFileRoute("/home")({
   loader: async () => {
@@ -140,27 +143,27 @@ function Home() {
     <Suspense
       fallback={
         <div
-          style={{
+          class={css({
             height: "100vh",
             display: "flex",
-            "align-items": "center",
-            "justify-content": "center",
+            alignItems: "center",
+            justifyContent: "center",
             background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
             color: "white",
-            "font-family": "system-ui, -apple-system, sans-serif",
-          }}
+            fontFamily: "system-ui, -apple-system, sans-serif",
+          })}
         >
-          <div style={{ "text-align": "center" }}>
+          <div class={css({ textAlign: "center" })}>
             <div
-              style={{
+              class={css({
                 width: "40px",
                 height: "40px",
                 border: "4px solid rgba(255, 255, 255, 0.3)",
-                "border-top": "4px solid white",
-                "border-radius": "50%",
+                borderTop: "4px solid white",
+                borderRadius: "50%",
                 animation: "spin 1s linear infinite",
                 margin: "0 auto 16px",
-              }}
+              })}
             />
             <p>Loading...</p>
             <style>
@@ -176,73 +179,73 @@ function Home() {
       }
     >
       <div
-        style={{
+        class={css({
           height: "100vh",
           display: "flex",
-          "align-items": "center",
-          "justify-content": "center",
+          alignItems: "center",
+          justifyContent: "center",
           background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
           color: "white",
-          "font-family": "system-ui, -apple-system, sans-serif",
+          fontFamily: "system-ui, -apple-system, sans-serif",
           padding: "20px",
-        }}
+        })}
       >
         <div
-          style={{
+          class={css({
             background: "rgba(255, 255, 255, 0.95)",
-            "border-radius": "16px",
+            borderRadius: "16px",
             padding: "32px",
-            "max-width": "800px",
+            maxWidth: "800px",
             width: "100%",
-            "max-height": "90vh",
-            "overflow-y": "auto",
+            maxHeight: "90vh",
+            overflowY: "auto",
             color: "#1f2937",
-            "box-shadow": "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
-          }}
+            boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+          })}
         >
-          <div style={{ "text-align": "center", "margin-bottom": "32px" }}>
+          <div class={css({ textAlign: "center", marginBottom: "32px" })}>
             <h1
-              style={{
-                "font-size": "32px",
-                "font-weight": "700",
+              class={css({
+                fontSize: "32px",
+                fontWeight: "700",
                 margin: "0 0 8px 0",
                 background: "linear-gradient(45deg, #667eea, #764ba2)",
-                "-webkit-background-clip": "text",
-                "-webkit-text-fill-color": "transparent",
-              }}
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+              })}
             >
               Stable Diffusion Desktop
             </h1>
             <p
-              style={{
-                "font-size": "16px",
+              class={css({
+                fontSize: "16px",
                 color: "#6b7280",
                 margin: "0",
-              }}
+              })}
             >
               Choose a project to get started
             </p>
           </div>
 
           <div
-            style={{
+            class={css({
               display: "flex",
-              "flex-direction": "column",
+              flexDirection: "column",
               gap: "8px",
-              "margin-bottom": "24px",
-            }}
+              marginBottom: "24px",
+            })}
           >
             <For each={errorMessages()}>
               {(msg) => (
                 <div
-                  style={{
+                  class={css({
                     background: "#fef2f2",
                     border: "1px solid #fecaca",
                     color: "#dc2626",
                     padding: "12px 16px",
-                    "border-radius": "8px",
-                    "font-size": "14px",
-                  }}
+                    borderRadius: "8px",
+                    fontSize: "14px",
+                  })}
                 >
                   {msg}
                 </div>
@@ -251,87 +254,79 @@ function Home() {
           </div>
 
           <Show when={loaderData().recentProjects.length > 0}>
-            <div style={{ "margin-bottom": "32px" }}>
+            <div class={css({ marginBottom: "32px" })}>
               <h2
-                style={{
-                  "font-size": "20px",
-                  "font-weight": "600",
+                class={css({
+                  fontSize: "20px",
+                  fontWeight: "600",
                   margin: "0 0 16px 0",
                   color: "#1f2937",
-                }}
+                })}
               >
                 Recent Projects
               </h2>
               <div
-                style={{
+                class={css({
                   display: "grid",
                   gap: "16px",
-                  "grid-template-columns":
-                    "repeat(auto-fit, minmax(300px, 1fr))",
-                }}
+                  gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+                })}
               >
                 <For each={loaderData().recentProjects}>
                   {(project) => (
                     <div
                       onClick={() => openProjectMutation.mutate(project)}
-                      style={{
+                      class={css({
                         border: "2px solid #e5e7eb",
-                        "border-radius": "12px",
+                        borderRadius: "12px",
                         padding: "20px",
                         cursor: "pointer",
                         transition: "all 0.2s",
                         background: "white",
-                        "box-shadow": "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.borderColor = "#3b82f6";
-                        e.currentTarget.style.transform = "translateY(-2px)";
-                        e.currentTarget.style.boxShadow =
-                          "0 8px 25px -8px rgba(0, 0, 0, 0.15)";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.borderColor = "#e5e7eb";
-                        e.currentTarget.style.transform = "translateY(0)";
-                        e.currentTarget.style.boxShadow =
-                          "0 4px 6px -1px rgba(0, 0, 0, 0.1)";
-                      }}
+                        boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+                        "&:hover": {
+                          borderColor: "#3b82f6",
+                          transform: "translateY(-2px)",
+                          boxShadow: "0 8px 25px -8px rgba(0, 0, 0, 0.15)",
+                        },
+                      })}
                     >
                       <h3
-                        style={{
-                          "font-size": "20px",
-                          "font-weight": "600",
+                        class={css({
+                          fontSize: "20px",
+                          fontWeight: "600",
                           margin: "0 0 8px 0",
                           color: "#1f2937",
-                        }}
+                        })}
                       >
                         {project.name}
                       </h3>
                       <p
-                        style={{
-                          "font-size": "14px",
+                        class={css({
+                          fontSize: "14px",
                           color: "#6b7280",
                           margin: "0 0 4px 0",
-                        }}
+                        })}
                       >
                         Created: {formatDate(project.createdAt)}
                       </p>
                       <p
-                        style={{
-                          "font-size": "14px",
+                        class={css({
+                          fontSize: "14px",
                           color: "#6b7280",
                           margin: "0 0 8px 0",
-                        }}
+                        })}
                       >
                         Last opened: {formatDate(project.lastOpened)}
                       </p>
                       <p
-                        style={{
-                          "font-size": "12px",
+                        class={css({
+                          fontSize: "12px",
                           color: "#9ca3af",
                           margin: "0",
-                          "font-family": "monospace",
-                          "word-break": "break-all",
-                        }}
+                          fontFamily: "monospace",
+                          wordBreak: "break-all",
+                        })}
                       >
                         {project.path}
                       </p>
@@ -344,24 +339,24 @@ function Home() {
 
           <Show when={loaderData().recentProjects.length === 0}>
             <div
-              style={{
-                "text-align": "center",
+              class={css({
+                textAlign: "center",
                 padding: "40px",
                 color: "#6b7280",
-                "margin-bottom": "32px",
-              }}
+                marginBottom: "32px",
+              })}
             >
               <div
-                style={{
+                class={css({
                   width: "64px",
                   height: "64px",
                   background: "linear-gradient(45deg, #e5e7eb, #d1d5db)",
-                  "border-radius": "50%",
+                  borderRadius: "50%",
                   display: "flex",
-                  "align-items": "center",
-                  "justify-content": "center",
+                  alignItems: "center",
+                  justifyContent: "center",
                   margin: "0 auto 16px",
-                }}
+                })}
               >
                 <svg
                   width="32"
@@ -376,46 +371,45 @@ function Home() {
                   <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
                 </svg>
               </div>
-              <p style={{ "font-size": "18px", margin: "0 0 8px 0" }}>
+              <p class={css({ fontSize: "18px", margin: "0 0 8px 0" })}>
                 No recent projects
               </p>
-              <p style={{ "font-size": "14px", margin: "0" }}>
+              <p class={css({ fontSize: "14px", margin: "0" })}>
                 Create a new project or open an existing one to get started
               </p>
             </div>
           </Show>
 
           <div
-            style={{
+            class={css({
               display: "flex",
               gap: "12px",
-              "justify-content": "center",
-              "flex-wrap": "wrap",
-            }}
+              justifyContent: "center",
+              flexWrap: "wrap",
+            })}
           >
             <button
               onClick={() => createProjectMutation.mutate()}
               disabled={createProjectMutation.isPending}
-              style={{
-                padding: "12px 24px",
-                background: "#3b82f6",
-                color: "white",
-                border: "none",
-                "border-radius": "8px",
-                "font-size": "16px",
-                "font-weight": "500",
-                cursor: "pointer",
-                transition: "all 0.2s",
-                opacity: createProjectMutation.isPending ? "0.6" : "1",
-              }}
-              onMouseEnter={(e) => {
-                if (!createProjectMutation.isPending) {
-                  e.currentTarget.style.background = "#2563eb";
-                }
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = "#3b82f6";
-              }}
+              class={clsx(
+                css({
+                  padding: "12px 24px",
+                  background: "#3b82f6",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "8px",
+                  fontSize: "16px",
+                  fontWeight: "500",
+                  transition: "all 0.2s",
+                }),
+                createProjectMutation.isPending
+                  ? css({ opacity: 0.6, cursor: "not-allowed" })
+                  : css({
+                      opacity: 1,
+                      cursor: "pointer",
+                      "&:hover": { background: "#2563eb" },
+                    })
+              )}
             >
               <Switch fallback="Create New Project">
                 <Match when={createProjectMutation.isPending}>
@@ -426,25 +420,18 @@ function Home() {
 
             <button
               onClick={() => openExistingProjectMutation.mutate()}
-              style={{
+              class={css({
                 padding: "12px 24px",
                 background: "transparent",
                 color: "#3b82f6",
                 border: "2px solid #3b82f6",
-                "border-radius": "8px",
-                "font-size": "16px",
-                "font-weight": "500",
+                borderRadius: "8px",
+                fontSize: "16px",
+                fontWeight: "500",
                 cursor: "pointer",
                 transition: "all 0.2s",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = "#3b82f6";
-                e.currentTarget.style.color = "white";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = "transparent";
-                e.currentTarget.style.color = "#3b82f6";
-              }}
+                "&:hover": { background: "#3b82f6", color: "white" },
+              })}
             >
               Open Existing Project
             </button>

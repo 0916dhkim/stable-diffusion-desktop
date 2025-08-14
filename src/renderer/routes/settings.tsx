@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/solid-router";
 import { createSignal, Suspense } from "solid-js";
+import { css } from "@flow-css/core/css";
+import { clsx } from "clsx";
 
 export const Route = createFileRoute("/settings")({
   validateSearch: (search: Record<string, unknown>) => {
@@ -84,28 +86,28 @@ function Settings() {
     <Suspense
       fallback={
         <div
-          style={{
-            "min-height": "100vh",
+          class={css({
+            minHeight: "100vh",
             background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
             color: "white",
-            "font-family": "system-ui, -apple-system, sans-serif",
+            fontFamily: "system-ui, -apple-system, sans-serif",
             padding: "20px",
             display: "flex",
-            "align-items": "center",
-            "justify-content": "center",
-          }}
+            alignItems: "center",
+            justifyContent: "center",
+          })}
         >
-          <div style={{ "text-align": "center" }}>
+          <div class={css({ textAlign: "center" })}>
             <div
-              style={{
+              class={css({
                 width: "40px",
                 height: "40px",
                 border: "4px solid rgba(255, 255, 255, 0.3)",
-                "border-top": "4px solid white",
-                "border-radius": "50%",
+                borderTop: "4px solid white",
+                borderRadius: "50%",
                 animation: "spin 1s linear infinite",
                 margin: "0 auto 16px",
-              }}
+              })}
             />
             <p>Loading settings...</p>
             <style>
@@ -121,78 +123,75 @@ function Settings() {
       }
     >
       <div
-        style={{
-          "min-height": "100vh",
+        class={css({
+          minHeight: "100vh",
           background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
           color: "white",
-          "font-family": "system-ui, -apple-system, sans-serif",
+          fontFamily: "system-ui, -apple-system, sans-serif",
           padding: "20px",
           display: "flex",
-          "align-items": "center",
-          "justify-content": "center",
-        }}
+          alignItems: "center",
+          justifyContent: "center",
+        })}
       >
         <div
-          style={{
+          class={css({
             background: "rgba(255, 255, 255, 0.95)",
-            "border-radius": "16px",
+            borderRadius: "16px",
             padding: "32px",
-            "max-width": "500px",
+            maxWidth: "500px",
             width: "100%",
             color: "#1f2937",
-            "box-shadow": "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
-          }}
+            boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+          })}
         >
           {/* Header */}
-          <div style={{ "margin-bottom": "32px" }}>
+          <div class={css({ marginBottom: "32px" })}>
             <div
-              style={{
+              class={css({
                 display: "flex",
-                "align-items": "center",
-                "margin-bottom": "16px",
-              }}
+                alignItems: "center",
+                marginBottom: "16px",
+              })}
             >
               <button
                 onClick={handleBack}
-                style={{
+                class={css({
                   background: "none",
                   border: "none",
                   color: "#6b7280",
                   cursor: "pointer",
-                  "font-size": "20px",
+                  fontSize: "20px",
                   padding: "8px",
-                  "border-radius": "6px",
+                  borderRadius: "6px",
                   transition: "background-color 0.2s",
-                  "margin-right": "12px",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "#f3f4f6";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "none";
-                }}
+                  marginRight: "12px",
+                  "&:hover": {
+                    background: "#f3f4f6",
+                  },
+                })}
               >
                 ←
               </button>
               <h1
-                style={{
-                  "font-size": "28px",
-                  "font-weight": "700",
+                class={css({
+                  fontSize: "28px",
+                  fontWeight: "700",
                   margin: "0",
                   background: "linear-gradient(45deg, #667eea, #764ba2)",
-                  "-webkit-background-clip": "text",
-                  "-webkit-text-fill-color": "transparent",
-                }}
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                })}
               >
                 Settings
               </h1>
             </div>
             <p
-              style={{
-                "font-size": "16px",
+              class={css({
+                fontSize: "16px",
                 color: "#6b7280",
                 margin: "0",
-              }}
+              })}
             >
               Configure your API key and application preferences
             </p>
@@ -201,16 +200,25 @@ function Settings() {
           {/* Message Display */}
           {message() && (
             <div
-              style={{
-                background:
-                  message()!.type === "success" ? "#f0fdf4" : "#fef2f2",
-                border: `1px solid ${message()!.type === "success" ? "#bbf7d0" : "#fecaca"}`,
-                color: message()!.type === "success" ? "#166534" : "#dc2626",
-                padding: "12px 16px",
-                "border-radius": "8px",
-                "margin-bottom": "24px",
-                "font-size": "14px",
-              }}
+              class={clsx(
+                css({
+                  padding: "12px 16px",
+                  borderRadius: "8px",
+                  marginBottom: "24px",
+                  fontSize: "14px",
+                }),
+                message()!.type === "success"
+                  ? css({
+                      background: "#f0fdf4",
+                      border: "1px solid #bbf7d0",
+                      color: "#166534",
+                    })
+                  : css({
+                      background: "#fef2f2",
+                      border: "1px solid #fecaca",
+                      color: "#dc2626",
+                    })
+              )}
             >
               {message()!.text}
             </div>
@@ -219,31 +227,31 @@ function Settings() {
           {/* Current API Key Status */}
           {currentApiKey() && (
             <div
-              style={{
+              class={css({
                 background: "#f0fdf4",
                 border: "1px solid #bbf7d0",
-                "border-radius": "8px",
+                borderRadius: "8px",
                 padding: "16px",
-                "margin-bottom": "24px",
-              }}
+                marginBottom: "24px",
+              })}
             >
               <h3
-                style={{
+                class={css({
                   margin: "0 0 8px 0",
-                  "font-size": "16px",
-                  "font-weight": "600",
+                  fontSize: "16px",
+                  fontWeight: "600",
                   color: "#166534",
-                }}
+                })}
               >
                 Current API Key
               </h3>
               <p
-                style={{
+                class={css({
                   margin: "0",
-                  "font-family": "monospace",
+                  fontFamily: "monospace",
                   color: "#166534",
-                  "font-size": "14px",
-                }}
+                  fontSize: "14px",
+                })}
               >
                 {currentApiKey()}
               </p>
@@ -252,15 +260,15 @@ function Settings() {
 
           {/* API Key Form */}
           <form onSubmit={handleSubmit}>
-            <div style={{ "margin-bottom": "24px" }}>
+            <div class={css({ marginBottom: "24px" })}>
               <label
-                style={{
+                class={css({
                   display: "block",
-                  "margin-bottom": "8px",
-                  "font-weight": "600",
+                  marginBottom: "8px",
+                  fontWeight: "600",
                   color: "#374151",
-                  "font-size": "16px",
-                }}
+                  fontSize: "16px",
+                })}
               >
                 {currentApiKey() ? "Update API Key" : "API Key"}
               </label>
@@ -273,46 +281,45 @@ function Settings() {
                     ? "Enter new API key..."
                     : "Enter your API key..."
                 }
-                style={{
+                class={css({
                   width: "100%",
                   padding: "12px 16px",
                   border: "1px solid #d1d5db",
-                  "border-radius": "8px",
-                  "font-size": "16px",
-                  "box-sizing": "border-box",
+                  borderRadius: "8px",
+                  fontSize: "16px",
+                  boxSizing: "border-box",
                   outline: "none",
                   transition: "border-color 0.2s",
-                }}
+                })}
                 onFocus={(e) => (e.currentTarget.style.borderColor = "#3b82f6")}
                 onBlur={(e) => (e.currentTarget.style.borderColor = "#d1d5db")}
               />
             </div>
 
-            <div style={{ display: "flex", gap: "12px" }}>
+            <div class={css({ display: "flex", gap: "12px" })}>
               <button
                 type="submit"
                 disabled={!apiKey().trim() || isSaving()}
-                style={{
-                  flex: "1",
-                  padding: "12px 24px",
-                  background: "#3b82f6",
-                  color: "white",
-                  border: "none",
-                  "border-radius": "8px",
-                  "font-size": "16px",
-                  "font-weight": "500",
-                  cursor: "pointer",
-                  opacity: !apiKey().trim() || isSaving() ? "0.6" : "1",
-                  transition: "all 0.2s",
-                }}
-                onMouseEnter={(e) => {
-                  if (!(!apiKey().trim() || isSaving())) {
-                    e.currentTarget.style.background = "#2563eb";
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "#3b82f6";
-                }}
+                class={clsx(
+                  css({
+                    flex: "1",
+                    padding: "12px 24px",
+                    background: "#3b82f6",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "8px",
+                    fontSize: "16px",
+                    fontWeight: "500",
+                    transition: "all 0.2s",
+                  }),
+                  !apiKey().trim() || isSaving()
+                    ? css({ opacity: 0.6, cursor: "not-allowed" })
+                    : css({
+                        opacity: 1,
+                        cursor: "pointer",
+                        "&:hover": { background: "#2563eb" },
+                      })
+                )}
               >
                 {isSaving()
                   ? "Saving..."
@@ -325,20 +332,20 @@ function Settings() {
 
           {/* Info Section */}
           <div
-            style={{
-              "margin-top": "24px",
+            class={css({
+              marginTop: "24px",
               padding: "16px",
               background: "#f3f4f6",
-              "border-radius": "8px",
-            }}
+              borderRadius: "8px",
+            })}
           >
             <p
-              style={{
+              class={css({
                 margin: "0",
-                "font-size": "14px",
+                fontSize: "14px",
                 color: "#6b7280",
-                "line-height": "1.4",
-              }}
+                lineHeight: "1.4",
+              })}
             >
               <strong>Note:</strong> Your API key is stored securely on your
               device and is never shared with third parties. You can obtain an
