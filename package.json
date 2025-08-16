@@ -13,7 +13,7 @@
     "build:linux": "electron-vite build && electron-builder --linux"
   },
   "devDependencies": {
-    "@flow-css/vite": "^1.2.0",
+    "@flow-css/vite": "^1.3.0",
     "@tanstack/router-plugin": "^1.131.8",
     "drizzle-kit": "^0.31.4",
     "electron": "^37.2.6",
@@ -27,7 +27,7 @@
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.2",
     "@electron-toolkit/utils": "^4.0.0",
-    "@flow-css/core": "^1.2.0",
+    "@flow-css/core": "^1.3.0",
     "@libsql/client": "^0.15.10",
     "@tanstack/solid-query": "^5.83.1",
     "@tanstack/solid-router": "^1.131.9",

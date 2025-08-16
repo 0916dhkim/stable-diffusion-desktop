@@ -141,15 +141,15 @@ function Home() {
 
   return (
     <div
-      class={css({
+      class={css((t) => ({
         height: "100vh",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+        background: t.var("--bg-primary-gradient"),
         color: "white",
         fontFamily: "system-ui, -apple-system, sans-serif",
-      })}
+      }))}
     >
       <Suspense
         fallback={
