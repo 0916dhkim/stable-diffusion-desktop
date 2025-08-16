@@ -88,8 +88,8 @@ function Settings() {
         <div
           class={css((t) => ({
             minHeight: "100vh",
-            background: t.var("--bg-primary-gradient"),
-            color: t.var("--text-inverse"),
+            background: t.var("--gradient-primary"),
+            color: t.var("--color-paper-100"),
             fontFamily: "system-ui, -apple-system, sans-serif",
             padding: "20px",
             display: "flex",
@@ -102,8 +102,8 @@ function Settings() {
               class={css((t) => ({
                 width: "40px",
                 height: "40px",
-                border: `4px solid ${t.var("--white-30")}`,
-                borderTop: "4px solid white",
+                border: `4px solid ${t.var("--color-paper-300")}`,
+                borderTop: `4px solid ${t.var("--color-paper-100")}`,
                 borderRadius: "50%",
                 animation: "spin 1s linear infinite",
                 margin: "0 auto 16px",
@@ -125,8 +125,8 @@ function Settings() {
       <div
         class={css((t) => ({
           minHeight: "100vh",
-          background: t.var("--bg-primary-gradient"),
-          color: t.var("--text-inverse"),
+          background: t.var("--gradient-primary"),
+          color: t.var("--color-paper-100"),
           fontFamily: "system-ui, -apple-system, sans-serif",
           padding: "20px",
           display: "flex",
@@ -136,13 +136,13 @@ function Settings() {
       >
         <div
           class={css((t) => ({
-            background: t.var("--white-95"),
+            background: t.var("--color-paper-100"),
             borderRadius: "16px",
             padding: "32px",
             maxWidth: "500px",
             width: "100%",
-            color: t.var("--text-primary"),
-            boxShadow: `0 25px 50px -12px ${t.var("--black-25")}`,
+            color: t.var("--color-paper-800"),
+            boxShadow: t.var("--shadow"),
           }))}
         >
           {/* Header */}
@@ -159,14 +159,14 @@ function Settings() {
                 class={css((t) => ({
                   background: "none",
                   border: "none",
-                  color: t.var("--text-muted"),
+                  color: t.var("--color-paper-500"),
                   cursor: "pointer",
                   fontSize: "20px",
                   padding: "8px",
                   borderRadius: "6px",
                   transition: "background-color 0.2s",
                   marginRight: "12px",
-                  "&:hover": { background: t.var("--surface-muted") },
+                  "&:hover": { background: t.var("--color-paper-100") },
                 }))}
               >
                 ←
@@ -176,7 +176,7 @@ function Settings() {
                   fontSize: "28px",
                   fontWeight: "700",
                   margin: "0",
-                  background: t.var("--accent-gradient"),
+                  background: t.var("--gradient-primary"),
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                 }))}
@@ -187,7 +187,7 @@ function Settings() {
             <p
               class={css((t) => ({
                 fontSize: "16px",
-                color: t.var("--text-muted"),
+                color: t.var("--color-paper-500"),
                 margin: "0",
               }))}
             >
@@ -207,14 +207,14 @@ function Settings() {
                 }),
                 message()!.type === "success"
                   ? css((t) => ({
-                      background: t.var("--success-soft-bg"),
-                      border: `1px solid ${t.var("--success-soft-border")}`,
-                      color: t.var("--success-soft-text"),
+                      background: t.var("--color-green-100"),
+                      border: `1px solid ${t.var("--color-green-200")}`,
+                      color: t.var("--color-green-800"),
                     }))
                   : css((t) => ({
-                      background: t.var("--danger-soft-bg"),
-                      border: `1px solid ${t.var("--danger-soft-border")}`,
-                      color: t.var("--danger-soft-text"),
+                      background: t.var("--color-red-100"),
+                      border: `1px solid ${t.var("--color-red-200")}`,
+                      color: t.var("--color-red-700"),
                     }))
               )}
             >
@@ -226,8 +226,8 @@ function Settings() {
           {currentApiKey() && (
             <div
               class={css((t) => ({
-                background: t.var("--success-soft-bg"),
-                border: `1px solid ${t.var("--success-soft-border")}`,
+                background: t.var("--color-green-100"),
+                border: `1px solid ${t.var("--color-green-200")}`,
                 borderRadius: "8px",
                 padding: "16px",
                 marginBottom: "24px",
@@ -238,7 +238,7 @@ function Settings() {
                   margin: "0 0 8px 0",
                   fontSize: "16px",
                   fontWeight: "600",
-                  color: t.var("--success-soft-text"),
+                  color: t.var("--color-green-800"),
                 }))}
               >
                 Current API Key
@@ -247,7 +247,7 @@ function Settings() {
                 class={css((t) => ({
                   margin: "0",
                   fontFamily: "monospace",
-                  color: t.var("--success-soft-text"),
+                  color: t.var("--color-green-800"),
                   fontSize: "14px",
                 }))}
               >
@@ -264,7 +264,7 @@ function Settings() {
                   display: "block",
                   marginBottom: "8px",
                   fontWeight: "600",
-                  color: t.var("--text-strong"),
+                  color: t.var("--color-paper-700"),
                   fontSize: "16px",
                 }))}
               >
@@ -282,7 +282,7 @@ function Settings() {
                 class={css((t) => ({
                   width: "100%",
                   padding: "12px 16px",
-                  border: `1px solid ${t.var("--border-muted")}`,
+                  border: `1px solid ${t.var("--color-paper-300")}`,
                   borderRadius: "8px",
                   fontSize: "16px",
                   boxSizing: "border-box",
@@ -292,12 +292,12 @@ function Settings() {
                 onFocus={(e) =>
                   (e.currentTarget.style.borderColor = getComputedStyle(
                     document.documentElement
-                  ).getPropertyValue("--brand"))
+                  ).getPropertyValue("--color-blue-500"))
                 }
                 onBlur={(e) =>
                   (e.currentTarget.style.borderColor = getComputedStyle(
                     document.documentElement
-                  ).getPropertyValue("--border-muted"))
+                  ).getPropertyValue("--color-paper-300"))
                 }
               />
             </div>
@@ -310,8 +310,8 @@ function Settings() {
                   css((t) => ({
                     flex: "1",
                     padding: "12px 24px",
-                    background: t.var("--brand"),
-                    color: t.var("--text-inverse"),
+                    background: t.var("--color-blue-500"),
+                    color: t.var("--color-paper-100"),
                     border: "none",
                     borderRadius: "8px",
                     fontSize: "16px",
@@ -323,7 +323,7 @@ function Settings() {
                     : css((t) => ({
                         opacity: 1,
                         cursor: "pointer",
-                        "&:hover": { background: t.var("--brand-hover") },
+                        "&:hover": { background: t.var("--color-blue-600") },
                       }))
                 )}
               >
@@ -341,7 +341,7 @@ function Settings() {
             class={css((t) => ({
               marginTop: "24px",
               padding: "16px",
-              background: t.var("--surface-muted"),
+              background: t.var("--color-paper-100"),
               borderRadius: "8px",
             }))}
           >
@@ -349,7 +349,7 @@ function Settings() {
               class={css((t) => ({
                 margin: "0",
                 fontSize: "14px",
-                color: t.var("--text-muted"),
+                color: t.var("--color-paper-500"),
                 lineHeight: "1.4",
               }))}
             >

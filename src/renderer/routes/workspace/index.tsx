@@ -203,8 +203,8 @@ function Workspace() {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        background: t.var("--bg-primary-gradient"),
-        color: t.var("--text-inverse"),
+        background: t.var("--gradient-primary"),
+        color: t.var("--color-paper-800"),
         fontFamily: "system-ui, -apple-system, sans-serif",
       }))}
     >
@@ -213,9 +213,9 @@ function Workspace() {
         class={css((t) => ({
           alignSelf: "stretch",
           padding: "16px 24px",
-          background: t.var("--white-10"),
+          background: t.var("--color-paper-100"),
           backdropFilter: "blur(10px)",
-          borderBottom: `1px solid ${t.var("--white-20")}`,
+          borderBottom: `1px solid ${t.var("--color-paper-300")}`,
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
@@ -240,7 +240,7 @@ function Workspace() {
           <div
             class={css((t) => ({
               padding: "4px 8px",
-              background: t.var("--white-20"),
+              background: t.var("--color-paper-200"),
               borderRadius: "4px",
               fontSize: "12px",
               fontWeight: "500",
@@ -255,14 +255,14 @@ function Workspace() {
             onClick={handleOpenSettings}
             class={css((t) => ({
               padding: "8px 16px",
-              background: t.var("--white-20"),
-              color: t.var("--text-inverse"),
-              border: `1px solid ${t.var("--white-30")}`,
+              background: t.var("--color-paper-200"),
+              color: t.var("--color-paper-800"),
+              border: `1px solid ${t.var("--color-paper-400")}`,
               borderRadius: "6px",
               fontSize: "14px",
               cursor: "pointer",
               transition: "all 0.2s",
-              "&:hover": { background: t.var("--white-30") },
+              "&:hover": { background: t.var("--color-paper-300") },
             }))}
           >
             Settings
@@ -271,14 +271,14 @@ function Workspace() {
             onClick={handleCloseProject}
             class={css((t) => ({
               padding: "8px 16px",
-              background: t.var("--danger-80"),
-              color: t.var("--text-inverse"),
-              border: `1px solid ${t.var("--danger-border")}`,
+              background: t.var("--color-red-500"),
+              color: t.var("--color-paper-100"),
+              border: `1px solid ${t.var("--color-red-300")}`,
               borderRadius: "6px",
               fontSize: "14px",
               cursor: "pointer",
               transition: "all 0.2s",
-              "&:hover": { background: t.var("--danger-100") },
+              "&:hover": { background: t.var("--color-red-600") },
             }))}
           >
             Close Project
@@ -292,8 +292,8 @@ function Workspace() {
               class={css((t) => ({
                 width: "40px",
                 height: "40px",
-                border: `4px solid ${t.var("--white-30")}`,
-                borderTop: "4px solid white",
+                border: `4px solid ${t.var("--color-paper-300")}`,
+                borderTop: `4px solid ${t.var("--color-paper-100")}`,
                 borderRadius: "50%",
                 animation: "spin 1s linear infinite",
                 margin: "0 auto 16px",
@@ -329,11 +329,11 @@ function Workspace() {
               class={css((t) => ({
                 width: "100%",
                 maxWidth: "860px",
-                background: t.var("--white-10"),
+                background: t.var("--color-paper-100"),
                 backdropFilter: "blur(10px)",
                 borderRadius: "12px",
                 padding: "24px",
-                border: `1px solid ${t.var("--white-20")}`,
+                border: `1px solid ${t.var("--color-paper-300")}`,
               }))}
             >
               <div
@@ -382,9 +382,9 @@ function Workspace() {
                   width: "100%",
                   resize: "vertical",
                   padding: "12px",
-                  background: t.var("--white-90"),
-                  color: t.var("--text-darker"),
-                  border: `1px solid ${t.var("--black-10")}`,
+                  background: t.var("--color-paper-100"),
+                  color: t.var("--color-paper-800"),
+                  border: `1px solid ${t.var("--color-paper-300")}`,
                   borderRadius: "8px",
                   fontSize: "14px",
                 }))}
@@ -396,7 +396,7 @@ function Workspace() {
                   type="button"
                   aria-expanded={showAdvanced() ? "true" : "false"}
                   onClick={() => setShowAdvanced((v) => !v)}
-                  class={css({
+                  class={css((t) => ({
                     width: "100%",
                     display: "flex",
                     alignItems: "center",
@@ -404,11 +404,11 @@ function Workspace() {
                     gap: "8px",
                     padding: "8px 12px",
                     background: "transparent",
-                    color: "white",
+                    color: t.var("--color-paper-700"),
                     border: "1px solid rgba(255, 255, 255, 0.4)",
                     borderRadius: "8px",
                     cursor: "pointer",
-                  })}
+                  }))}
                 >
                   <span class={css({ fontWeight: 600, fontSize: "14px" })}>
                     Advanced options
@@ -448,9 +448,9 @@ function Workspace() {
                         width: "100%",
                         resize: "vertical",
                         padding: "12px",
-                        background: t.var("--white-75"),
-                        color: t.var("--text-darker"),
-                        border: `1px solid ${t.var("--black-10")}`,
+                        background: t.var("--color-paper-200"),
+                        color: t.var("--color-paper-800"),
+                        border: `1px solid ${t.var("--color-paper-300")}`,
                         borderRadius: "8px",
                         fontSize: "14px",
                       }))}
@@ -491,9 +491,9 @@ function Workspace() {
                           class={css((t) => ({
                             width: "100%",
                             padding: "10px 12px",
-                            background: t.var("--white-90"),
-                            color: t.var("--text-darker"),
-                            border: `1px solid ${t.var("--black-10")}`,
+                            background: t.var("--color-paper-100"),
+                            color: t.var("--color-paper-800"),
+                            border: `1px solid ${t.var("--color-paper-300")}`,
                             borderRadius: "8px",
                             fontSize: "14px",
                           }))}
@@ -616,9 +616,9 @@ function Workspace() {
                           class={css((t) => ({
                             width: "100%",
                             padding: "10px 12px",
-                            background: t.var("--white-90"),
-                            color: t.var("--text-darker"),
-                            border: `1px solid ${t.var("--black-10")}`,
+                            background: t.var("--color-paper-100"),
+                            color: t.var("--color-paper-800"),
+                            border: `1px solid ${t.var("--color-paper-300")}`,
                             borderRadius: "8px",
                             fontSize: "14px",
                           }))}
@@ -660,9 +660,9 @@ function Workspace() {
                           class={css((t) => ({
                             width: "100%",
                             padding: "10px 12px",
-                            background: t.var("--white-75"),
-                            color: t.var("--text-darker"),
-                            border: `1px solid ${t.var("--black-10")}`,
+                            background: t.var("--color-paper-200"),
+                            color: t.var("--color-paper-800"),
+                            border: `1px solid ${t.var("--color-paper-300")}`,
                             borderRadius: "8px",
                             fontSize: "14px",
                           }))}
@@ -690,8 +690,8 @@ function Workspace() {
                   class={css((t) => ({
                     padding: "10px 16px",
                     background: "transparent",
-                    color: t.var("--text-inverse"),
-                    border: `1px solid ${t.var("--white-40")}`,
+                    color: t.var("--color-paper-800"),
+                    border: `1px solid ${t.var("--color-paper-400")}`,
                     borderRadius: "8px",
                     cursor: "pointer",
                   }))}
@@ -705,21 +705,21 @@ function Workspace() {
                   class={clsx(
                     css((t) => ({
                       padding: "10px 16px",
-                      color: t.var("--text-inverse"),
+                      color: t.var("--color-paper-100"),
                       border: "none",
                       borderRadius: "8px",
                       fontWeight: 600,
                     })),
                     canSubmit()
-                      ? css({
-                          background: "var(--success)",
+                      ? css((t) => ({
+                          background: t.var("--color-green-500"),
                           cursor: "pointer",
-                          "&:hover": { background: "var(--success-hover)" },
-                        })
-                      : css({
-                          background: "var(--success-50)",
+                          "&:hover": { background: t.var("--color-green-600") },
+                        }))
+                      : css((t) => ({
+                          background: t.var("--color-green-200"),
                           cursor: "not-allowed",
-                        })
+                        }))
                   )}
                 >
                   <Show
@@ -751,8 +751,8 @@ function Workspace() {
                       width: "100%",
                       maxHeight: "480px",
                       objectFit: "contain",
-                      background: t.var("--white-15"),
-                      border: `1px solid ${t.var("--white-25")}`,
+                      background: t.var("--color-paper-100"),
+                      border: `1px solid ${t.var("--color-paper-300")}`,
                       borderRadius: "8px",
                     }))}
                   />
@@ -777,9 +777,9 @@ function Workspace() {
                     onClick={() => void loadHistory()}
                     class={css((t) => ({
                       padding: "6px 10px",
-                      background: t.var("--white-15"),
-                      color: t.var("--text-inverse"),
-                      border: `1px solid ${t.var("--white-25")}`,
+                      background: t.var("--color-paper-100"),
+                      color: t.var("--color-paper-800"),
+                      border: `1px solid ${t.var("--color-paper-300")}`,
                       borderRadius: "6px",
                       cursor: "pointer",
                       fontSize: "12px",
@@ -812,8 +812,8 @@ function Workspace() {
                             image: String(item.id),
                           })}
                           class={css((t) => ({
-                            background: t.var("--white-12"),
-                            border: `1px solid ${t.var("--white-20")}`,
+                            background: t.var("--color-paper-100"),
+                            border: `1px solid ${t.var("--color-paper-300")}`,
                             borderRadius: "8px",
                             overflow: "hidden",
                           }))}
@@ -826,7 +826,7 @@ function Workspace() {
                               height: "140px",
                               objectFit: "cover",
                               display: "block",
-                              background: t.var("--white-10"),
+                              background: t.var("--color-paper-100"),
                             }))}
                           />
                           <div

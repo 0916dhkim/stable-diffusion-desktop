@@ -71,8 +71,8 @@ function ImageDetailsPage() {
         overflow: "auto",
         display: "flex",
         flexDirection: "column",
-        background: t.var("--bg-primary-gradient"),
-        color: t.var("--text-inverse"),
+        background: t.var("--gradient-primary"),
+        color: t.var("--color-paper-100"),
         fontFamily: "system-ui, -apple-system, sans-serif",
       }))}
     >
@@ -82,8 +82,8 @@ function ImageDetailsPage() {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          borderBottom: `1px solid ${t.var("--white-20")}`,
-          background: t.var("--white-10"),
+          borderBottom: `1px solid ${t.var("--color-paper-300")}`,
+          background: t.var("--color-paper-100"),
           backdropFilter: "blur(10px)",
         }))}
       >
@@ -100,8 +100,8 @@ function ImageDetailsPage() {
             class={css((t) => ({
               padding: "6px 10px",
               background: "transparent",
-              color: t.var("--text-inverse"),
-              border: `1px solid ${t.var("--white-40")}`,
+              color: t.var("--color-paper-100"),
+              border: `1px solid ${t.var("--color-paper-400")}`,
               borderRadius: "6px",
               cursor: "pointer",
             }))}
@@ -117,9 +117,9 @@ function ImageDetailsPage() {
           title="Copy prompt"
           class={css((t) => ({
             padding: "8px 12px",
-            background: t.var("--white-20"),
-            color: t.var("--text-inverse"),
-            border: `1px solid ${t.var("--white-30")}`,
+            background: t.var("--color-paper-200"),
+            color: t.var("--color-paper-800"),
+            border: `1px solid ${t.var("--color-paper-400")}`,
             borderRadius: "6px",
             cursor: "pointer",
           }))}
@@ -144,16 +144,16 @@ function ImageDetailsPage() {
               width: "100%",
               maxHeight: "70vh",
               objectFit: "contain",
-              background: t.var("--white-15"),
-              border: `1px solid ${t.var("--white-25")}`,
+              background: t.var("--color-paper-100"),
+              border: `1px solid ${t.var("--color-paper-300")}`,
               borderRadius: "8px",
             }))}
           />
         </div>
         <div
           class={css((t) => ({
-            background: t.var("--white-10"),
-            border: `1px solid ${t.var("--white-20")}`,
+            background: t.var("--color-paper-100"),
+            border: `1px solid ${t.var("--color-paper-300")}`,
             borderRadius: "12px",
             padding: "16px",
             display: "grid",
@@ -176,12 +176,12 @@ function ImageDetailsPage() {
               marginTop: "8px",
               padding: "10px 16px",
               fontWeight: 800,
-              color: t.var("--text-inverse"),
-              background: "var(--success)",
+              color: t.var("--color-paper-100"),
+              background: t.var("--color-green-500"),
               border: "none",
               borderRadius: "8px",
               cursor: "pointer",
-              "&:hover": { background: "var(--success-hover)" },
+              "&:hover": { background: t.var("--color-green-600") },
             }))}
             onClick={() =>
               navigate({

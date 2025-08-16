@@ -37,7 +37,7 @@ function ApiKeyModal() {
         left: "0",
         width: "100%",
         height: "100%",
-        background: t.var("--black-50"),
+        background: t.var("--color-paper-600"),
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -51,7 +51,7 @@ function ApiKeyModal() {
           padding: "32px",
           width: "90%",
           maxWidth: "500px",
-          boxShadow: `0 20px 25px -5px ${t.var("--black-10")}, 0 10px 10px -5px ${t.var("--black-05")}`,
+          boxShadow: t.var("--shadow"),
         }))}
       >
         <div class={css({ marginBottom: "24px" })}>
@@ -60,7 +60,7 @@ function ApiKeyModal() {
               margin: "0 0 8px 0",
               fontSize: "24px",
               fontWeight: "600",
-              color: t.var("--text-primary"),
+              color: t.var("--color-paper-800"),
             }))}
           >
             Welcome to Stable Diffusion Desktop
@@ -68,7 +68,7 @@ function ApiKeyModal() {
           <p
             class={css((t) => ({
               margin: "0",
-              color: t.var("--text-muted"),
+              color: t.var("--color-paper-500"),
               lineHeight: "1.5",
             }))}
           >
@@ -83,7 +83,7 @@ function ApiKeyModal() {
                 display: "block",
                 marginBottom: "8px",
                 fontWeight: "500",
-                color: t.var("--text-strong"),
+                color: t.var("--color-paper-700"),
               }))}
             >
               API Key
@@ -97,7 +97,7 @@ function ApiKeyModal() {
               class={css((t) => ({
                 width: "100%",
                 padding: "12px 16px",
-                border: `1px solid ${t.var("--border-muted")}`,
+                border: `1px solid ${t.var("--color-paper-300")}`,
                 borderRadius: "8px",
                 fontSize: "16px",
                 boxSizing: "border-box",
@@ -107,12 +107,12 @@ function ApiKeyModal() {
               onFocus={(e) =>
                 (e.currentTarget.style.borderColor = getComputedStyle(
                   document.documentElement
-                ).getPropertyValue("--brand"))
+                ).getPropertyValue("--color-blue-500"))
               }
               onBlur={(e) =>
                 (e.currentTarget.style.borderColor = getComputedStyle(
                   document.documentElement
-                ).getPropertyValue("--border-muted"))
+                ).getPropertyValue("--color-paper-300"))
               }
             />
           </div>
@@ -125,8 +125,8 @@ function ApiKeyModal() {
                 css((t) => ({
                   flex: "1",
                   padding: "12px 24px",
-                  background: t.var("--brand"),
-                  color: t.var("--text-inverse"),
+                  background: t.var("--color-blue-500"),
+                  color: t.var("--color-paper-100"),
                   border: "none",
                   borderRadius: "8px",
                   fontSize: "16px",
@@ -138,7 +138,7 @@ function ApiKeyModal() {
                   : css((t) => ({
                       opacity: 1,
                       cursor: "pointer",
-                      "&:hover": { background: t.var("--brand-hover") },
+                      "&:hover": { background: t.var("--color-blue-600") },
                     }))
               )}
             >
@@ -152,7 +152,7 @@ function ApiKeyModal() {
           class={css((t) => ({
             marginTop: "24px",
             padding: "16px",
-            background: t.var("--surface-muted"),
+            background: t.var("--color-paper-100"),
             borderRadius: "8px",
           }))}
         >
@@ -160,7 +160,7 @@ function ApiKeyModal() {
             class={css((t) => ({
               margin: "0",
               fontSize: "14px",
-              color: t.var("--text-muted"),
+              color: t.var("--color-paper-500"),
               lineHeight: "1.4",
             }))}
           >

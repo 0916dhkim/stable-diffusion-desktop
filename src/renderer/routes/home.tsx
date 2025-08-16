@@ -146,8 +146,8 @@ function Home() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: t.var("--bg-primary-gradient"),
-        color: t.var("--text-inverse"),
+        background: t.var("--gradient-primary"),
+        color: t.var("--color-paper-100"),
         fontFamily: "system-ui, -apple-system, sans-serif",
       }))}
     >
@@ -158,8 +158,8 @@ function Home() {
               class={css((t) => ({
                 width: "40px",
                 height: "40px",
-                border: `4px solid ${t.var("--white-30")}`,
-                borderTop: "4px solid white",
+                border: `4px solid ${t.var("--color-paper-300")}`,
+                borderTop: `4px solid ${t.var("--color-paper-100")}`,
                 borderRadius: "50%",
                 animation: "spin 1s linear infinite",
                 margin: "0 auto 16px",
@@ -180,15 +180,15 @@ function Home() {
         <>
           <div
             class={css((t) => ({
-              background: t.var("--white-95"),
+              background: t.var("--color-paper-100"),
               borderRadius: "16px",
               padding: "32px",
               width: "100%",
               maxWidth: "800px",
               maxHeight: "90vh",
               overflowY: "auto",
-              color: t.var("--text-primary"),
-              boxShadow: `0 25px 50px -12px ${t.var("--black-25")}`,
+              color: t.var("--color-paper-800"),
+              boxShadow: t.var("--shadow"),
             }))}
           >
             <div class={css({ textAlign: "center", marginBottom: "32px" })}>
@@ -206,7 +206,7 @@ function Home() {
               <p
                 class={css((t) => ({
                   fontSize: "16px",
-                  color: t.var("--text-muted"),
+                  color: t.var("--color-paper-500"),
                   margin: "0",
                 }))}
               >
@@ -226,9 +226,9 @@ function Home() {
                 {(msg) => (
                   <div
                     class={css((t) => ({
-                      background: t.var("--danger-soft-bg"),
-                      border: `1px solid ${t.var("--danger-soft-border")}`,
-                      color: t.var("--danger-soft-text"),
+                      background: t.var("--color-red-100"),
+                      border: `1px solid ${t.var("--color-red-200")}`,
+                      color: t.var("--color-red-700"),
                       padding: "12px 16px",
                       borderRadius: "8px",
                       fontSize: "14px",
@@ -247,7 +247,7 @@ function Home() {
                     fontSize: "20px",
                     fontWeight: "600",
                     margin: "0 0 16px 0",
-                    color: t.var("--text-primary"),
+                    color: t.var("--color-paper-800"),
                   }))}
                 >
                   Recent Projects
@@ -264,17 +264,17 @@ function Home() {
                       <div
                         onClick={() => openProjectMutation.mutate(project)}
                         class={css((t) => ({
-                          border: `2px solid ${t.var("--border-default")}`,
+                          border: `2px solid ${t.var("--color-paper-200")}`,
                           borderRadius: "12px",
                           padding: "20px",
                           cursor: "pointer",
                           transition: "all 0.2s",
                           background: "white",
-                          boxShadow: `0 4px 6px -1px ${t.var("--black-10")}`,
+                          boxShadow: t.var("--shadow"),
                           "&:hover": {
-                            borderColor: t.var("--brand"),
+                            borderColor: t.var("--color-blue-500"),
                             transform: "translateY(-2px)",
-                            boxShadow: `0 8px 25px -8px ${t.var("--black-15")}`,
+                            boxShadow: t.var("--shadow"),
                           },
                         }))}
                       >
@@ -283,7 +283,7 @@ function Home() {
                             fontSize: "20px",
                             fontWeight: "600",
                             margin: "0 0 8px 0",
-                            color: t.var("--text-primary"),
+                            color: t.var("--color-paper-800"),
                           }))}
                         >
                           {project.name}
@@ -291,7 +291,7 @@ function Home() {
                         <p
                           class={css((t) => ({
                             fontSize: "14px",
-                            color: t.var("--text-muted"),
+                            color: t.var("--color-paper-500"),
                             margin: "0 0 4px 0",
                           }))}
                         >
@@ -300,7 +300,7 @@ function Home() {
                         <p
                           class={css((t) => ({
                             fontSize: "14px",
-                            color: t.var("--text-muted"),
+                            color: t.var("--color-paper-500"),
                             margin: "0 0 8px 0",
                           }))}
                         >
@@ -309,7 +309,7 @@ function Home() {
                         <p
                           class={css((t) => ({
                             fontSize: "12px",
-                            color: t.var("--text-subtle"),
+                            color: t.var("--color-paper-400"),
                             margin: "0",
                             fontFamily: "monospace",
                             wordBreak: "break-all",
@@ -329,7 +329,7 @@ function Home() {
                 class={css((t) => ({
                   textAlign: "center",
                   padding: "40px",
-                  color: t.var("--text-muted"),
+                  color: t.var("--color-paper-500"),
                   marginBottom: "32px",
                 }))}
               >
@@ -337,7 +337,7 @@ function Home() {
                   class={css((t) => ({
                     width: "64px",
                     height: "64px",
-                    background: t.var("--bg-muted-gradient"),
+                    background: t.var("--gradient-primary"),
                     borderRadius: "50%",
                     display: "flex",
                     alignItems: "center",
@@ -381,8 +381,8 @@ function Home() {
                 class={clsx(
                   css((t) => ({
                     padding: "12px 24px",
-                    background: t.var("--brand"),
-                    color: t.var("--text-inverse"),
+                    background: t.var("--color-blue-500"),
+                    color: t.var("--color-paper-100"),
                     border: "none",
                     borderRadius: "8px",
                     fontSize: "16px",
@@ -394,7 +394,7 @@ function Home() {
                     : css((t) => ({
                         opacity: 1,
                         cursor: "pointer",
-                        "&:hover": { background: t.var("--brand-hover") },
+                        "&:hover": { background: t.var("--color-blue-600") },
                       }))
                 )}
               >
@@ -410,16 +410,16 @@ function Home() {
                 class={css((t) => ({
                   padding: "12px 24px",
                   background: "transparent",
-                  color: t.var("--brand"),
-                  border: `2px solid ${t.var("--brand")}`,
+                  color: t.var("--color-blue-500"),
+                  border: `2px solid ${t.var("--color-blue-500")}`,
                   borderRadius: "8px",
                   fontSize: "16px",
                   fontWeight: "500",
                   cursor: "pointer",
                   transition: "all 0.2s",
                   "&:hover": {
-                    background: t.var("--brand"),
-                    color: t.var("--text-inverse"),
+                    background: t.var("--color-blue-500"),
+                    color: t.var("--color-paper-100"),
                   },
                 }))}
               >

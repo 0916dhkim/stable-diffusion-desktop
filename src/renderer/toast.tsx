@@ -63,12 +63,12 @@ const toastBase = css((t) => ({
   padding: "10px 12px",
   borderRadius: "8px",
   fontSize: "14px",
-  boxShadow: `0 10px 15px -3px ${t.var("--black-10")}, 0 4px 6px -2px ${t.var("--black-05")}`,
-  border: `1px solid ${t.var("--white-20")}`,
-  color: t.var("--text-inverse"),
+  boxShadow: t.var("--shadow"),
+  border: `1px solid ${t.var("--color-paper-300")}`,
+  color: t.var("--color-paper-100"),
 }));
 
-const toastError = css((t) => ({ background: t.var("--danger-90") }));
-const toastSuccess = css((t) => ({ background: t.var("--success-90") }));
-const toastWarning = css((t) => ({ background: t.var("--warning-90") }));
-const toastInfo = css((t) => ({ background: t.var("--info-90") }));
+const toastError = css((t) => ({ background: t.var("--color-red-600") }));
+const toastSuccess = css((t) => ({ background: t.var("--color-green-600") }));
+const toastWarning = css((t) => ({ background: t.var("--color-yellow-600") }));
+const toastInfo = css((t) => ({ background: t.var("--color-blue-600") }));
