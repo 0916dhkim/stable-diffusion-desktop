@@ -147,7 +147,7 @@ function Home() {
         alignItems: "center",
         justifyContent: "center",
         background: t.var("--bg-primary-gradient"),
-        color: "white",
+        color: t.var("--text-inverse"),
         fontFamily: "system-ui, -apple-system, sans-serif",
       }))}
     >
@@ -155,15 +155,15 @@ function Home() {
         fallback={
           <div class={css({ textAlign: "center" })}>
             <div
-              class={css({
+              class={css((t) => ({
                 width: "40px",
                 height: "40px",
-                border: "4px solid rgba(255, 255, 255, 0.3)",
+                border: `4px solid ${t.var("--white-30")}`,
                 borderTop: "4px solid white",
                 borderRadius: "50%",
                 animation: "spin 1s linear infinite",
                 margin: "0 auto 16px",
-              })}
+              }))}
             />
             <p>Loading...</p>
             <style>
@@ -179,17 +179,17 @@ function Home() {
       >
         <>
           <div
-            class={css({
-              background: "rgba(255, 255, 255, 0.95)",
+            class={css((t) => ({
+              background: t.var("--white-95"),
               borderRadius: "16px",
               padding: "32px",
               width: "100%",
               maxWidth: "800px",
               maxHeight: "90vh",
               overflowY: "auto",
-              color: "#1f2937",
-              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
-            })}
+              color: t.var("--text-primary"),
+              boxShadow: `0 25px 50px -12px ${t.var("--black-25")}`,
+            }))}
           >
             <div class={css({ textAlign: "center", marginBottom: "32px" })}>
               <h1
@@ -204,11 +204,11 @@ function Home() {
                 Stable Diffusion Desktop
               </h1>
               <p
-                class={css({
+                class={css((t) => ({
                   fontSize: "16px",
-                  color: "#6b7280",
+                  color: t.var("--text-muted"),
                   margin: "0",
-                })}
+                }))}
               >
                 Choose a project to get started
               </p>
@@ -225,14 +225,14 @@ function Home() {
               <For each={errorMessages()}>
                 {(msg) => (
                   <div
-                    class={css({
-                      background: "#fef2f2",
-                      border: "1px solid #fecaca",
-                      color: "#dc2626",
+                    class={css((t) => ({
+                      background: t.var("--danger-soft-bg"),
+                      border: `1px solid ${t.var("--danger-soft-border")}`,
+                      color: t.var("--danger-soft-text"),
                       padding: "12px 16px",
                       borderRadius: "8px",
                       fontSize: "14px",
-                    })}
+                    }))}
                   >
                     {msg}
                   </div>
@@ -243,12 +243,12 @@ function Home() {
             <Show when={loaderData().recentProjects.length > 0}>
               <div class={css({ marginBottom: "32px" })}>
                 <h2
-                  class={css({
+                  class={css((t) => ({
                     fontSize: "20px",
                     fontWeight: "600",
                     margin: "0 0 16px 0",
-                    color: "#1f2937",
-                  })}
+                    color: t.var("--text-primary"),
+                  }))}
                 >
                   Recent Projects
                 </h2>
@@ -263,57 +263,57 @@ function Home() {
                     {(project) => (
                       <div
                         onClick={() => openProjectMutation.mutate(project)}
-                        class={css({
-                          border: "2px solid #e5e7eb",
+                        class={css((t) => ({
+                          border: `2px solid ${t.var("--border-default")}`,
                           borderRadius: "12px",
                           padding: "20px",
                           cursor: "pointer",
                           transition: "all 0.2s",
                           background: "white",
-                          boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+                          boxShadow: `0 4px 6px -1px ${t.var("--black-10")}`,
                           "&:hover": {
-                            borderColor: "#3b82f6",
+                            borderColor: t.var("--brand"),
                             transform: "translateY(-2px)",
-                            boxShadow: "0 8px 25px -8px rgba(0, 0, 0, 0.15)",
+                            boxShadow: `0 8px 25px -8px ${t.var("--black-15")}`,
                           },
-                        })}
+                        }))}
                       >
                         <h3
-                          class={css({
+                          class={css((t) => ({
                             fontSize: "20px",
                             fontWeight: "600",
                             margin: "0 0 8px 0",
-                            color: "#1f2937",
-                          })}
+                            color: t.var("--text-primary"),
+                          }))}
                         >
                           {project.name}
                         </h3>
                         <p
-                          class={css({
+                          class={css((t) => ({
                             fontSize: "14px",
-                            color: "#6b7280",
+                            color: t.var("--text-muted"),
                             margin: "0 0 4px 0",
-                          })}
+                          }))}
                         >
                           Created: {formatDate(project.createdAt)}
                         </p>
                         <p
-                          class={css({
+                          class={css((t) => ({
                             fontSize: "14px",
-                            color: "#6b7280",
+                            color: t.var("--text-muted"),
                             margin: "0 0 8px 0",
-                          })}
+                          }))}
                         >
                           Last opened: {formatDate(project.lastOpened)}
                         </p>
                         <p
-                          class={css({
+                          class={css((t) => ({
                             fontSize: "12px",
-                            color: "#9ca3af",
+                            color: t.var("--text-subtle"),
                             margin: "0",
                             fontFamily: "monospace",
                             wordBreak: "break-all",
-                          })}
+                          }))}
                         >
                           {project.path}
                         </p>
@@ -326,31 +326,31 @@ function Home() {
 
             <Show when={loaderData().recentProjects.length === 0}>
               <div
-                class={css({
+                class={css((t) => ({
                   textAlign: "center",
                   padding: "40px",
-                  color: "#6b7280",
+                  color: t.var("--text-muted"),
                   marginBottom: "32px",
-                })}
+                }))}
               >
                 <div
-                  class={css({
+                  class={css((t) => ({
                     width: "64px",
                     height: "64px",
-                    background: "linear-gradient(45deg, #e5e7eb, #d1d5db)",
+                    background: t.var("--bg-muted-gradient"),
                     borderRadius: "50%",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     margin: "0 auto 16px",
-                  })}
+                  }))}
                 >
                   <svg
                     width="32"
                     height="32"
                     viewBox="0 0 24 24"
                     fill="none"
-                    stroke="#6b7280"
+                    stroke="currentColor"
                     stroke-width="2"
                     stroke-linecap="round"
                     stroke-linejoin="round"
@@ -379,23 +379,23 @@ function Home() {
                 onClick={() => createProjectMutation.mutate()}
                 disabled={createProjectMutation.isPending}
                 class={clsx(
-                  css({
+                  css((t) => ({
                     padding: "12px 24px",
-                    background: "#3b82f6",
-                    color: "white",
+                    background: t.var("--brand"),
+                    color: t.var("--text-inverse"),
                     border: "none",
                     borderRadius: "8px",
                     fontSize: "16px",
                     fontWeight: "500",
                     transition: "all 0.2s",
-                  }),
+                  })),
                   createProjectMutation.isPending
                     ? css({ opacity: 0.6, cursor: "not-allowed" })
-                    : css({
+                    : css((t) => ({
                         opacity: 1,
                         cursor: "pointer",
-                        "&:hover": { background: "#2563eb" },
-                      })
+                        "&:hover": { background: t.var("--brand-hover") },
+                      }))
                 )}
               >
                 <Switch fallback="Create New Project">
@@ -407,18 +407,21 @@ function Home() {
 
               <button
                 onClick={() => openExistingProjectMutation.mutate()}
-                class={css({
+                class={css((t) => ({
                   padding: "12px 24px",
                   background: "transparent",
-                  color: "#3b82f6",
-                  border: "2px solid #3b82f6",
+                  color: t.var("--brand"),
+                  border: `2px solid ${t.var("--brand")}`,
                   borderRadius: "8px",
                   fontSize: "16px",
                   fontWeight: "500",
                   cursor: "pointer",
                   transition: "all 0.2s",
-                  "&:hover": { background: "#3b82f6", color: "white" },
-                })}
+                  "&:hover": {
+                    background: t.var("--brand"),
+                    color: t.var("--text-inverse"),
+                  },
+                }))}
               >
                 Open Existing Project
               </button>

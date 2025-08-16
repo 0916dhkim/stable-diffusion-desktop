@@ -66,26 +66,26 @@ function ImageDetailsPage() {
 
   return (
     <div
-      class={css({
+      class={css((t) => ({
         height: "100vh",
         overflow: "auto",
         display: "flex",
         flexDirection: "column",
-        background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-        color: "white",
+        background: t.var("--bg-primary-gradient"),
+        color: t.var("--text-inverse"),
         fontFamily: "system-ui, -apple-system, sans-serif",
-      })}
+      }))}
     >
       <div
-        class={css({
+        class={css((t) => ({
           padding: "16px 24px",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          borderBottom: "1px solid rgba(255,255,255,0.2)",
-          background: "rgba(255,255,255,0.1)",
+          borderBottom: `1px solid ${t.var("--white-20")}`,
+          background: t.var("--white-10"),
           backdropFilter: "blur(10px)",
-        })}
+        }))}
       >
         <div
           class={css({ display: "flex", gap: "12px", alignItems: "center" })}
@@ -97,14 +97,14 @@ function ImageDetailsPage() {
                 search: (p) => ({ ...p, project: search().project }),
               })
             }
-            class={css({
+            class={css((t) => ({
               padding: "6px 10px",
               background: "transparent",
-              color: "white",
-              border: "1px solid rgba(255,255,255,0.4)",
+              color: t.var("--text-inverse"),
+              border: `1px solid ${t.var("--white-40")}`,
               borderRadius: "6px",
               cursor: "pointer",
-            })}
+            }))}
           >
             Back
           </button>
@@ -115,14 +115,14 @@ function ImageDetailsPage() {
         <button
           onClick={onCopy}
           title="Copy prompt"
-          class={css({
+          class={css((t) => ({
             padding: "8px 12px",
-            background: "rgba(255,255,255,0.2)",
-            color: "white",
-            border: "1px solid rgba(255,255,255,0.3)",
+            background: t.var("--white-20"),
+            color: t.var("--text-inverse"),
+            border: `1px solid ${t.var("--white-30")}`,
             borderRadius: "6px",
             cursor: "pointer",
-          })}
+          }))}
         >
           Copy Prompt
         </button>
@@ -140,26 +140,26 @@ function ImageDetailsPage() {
           <img
             src={filePathToMediaUrl(details().imagePath)}
             alt={details().prompt}
-            class={css({
+            class={css((t) => ({
               width: "100%",
               maxHeight: "70vh",
               objectFit: "contain",
-              background: "rgba(255,255,255,0.15)",
-              border: "1px solid rgba(255,255,255,0.25)",
+              background: t.var("--white-15"),
+              border: `1px solid ${t.var("--white-25")}`,
               borderRadius: "8px",
-            })}
+            }))}
           />
         </div>
         <div
-          class={css({
-            background: "rgba(255,255,255,0.1)",
-            border: "1px solid rgba(255,255,255,0.2)",
+          class={css((t) => ({
+            background: t.var("--white-10"),
+            border: `1px solid ${t.var("--white-20")}`,
             borderRadius: "12px",
             padding: "16px",
             display: "grid",
             gap: "10px",
             alignContent: "start",
-          })}
+          }))}
         >
           <Row label="Prompt" value={details().prompt} />
           <Row label="Negative" value={details().negativePrompt} />
@@ -172,17 +172,17 @@ function ImageDetailsPage() {
           <Row label="Created" value={details().createdAt} />
 
           <button
-            class={css({
+            class={css((t) => ({
               marginTop: "8px",
               padding: "10px 16px",
               fontWeight: 800,
-              color: "white",
-              background: "#10b981",
+              color: t.var("--text-inverse"),
+              background: "var(--success)",
               border: "none",
               borderRadius: "8px",
               cursor: "pointer",
-              "&:hover": { background: "#059669" },
-            })}
+              "&:hover": { background: "var(--success-hover)" },
+            }))}
             onClick={() =>
               navigate({
                 to: "/workspace",

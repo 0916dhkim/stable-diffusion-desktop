@@ -57,19 +57,18 @@ export function ToastContainer() {
   );
 }
 
-const toastBase = css({
+const toastBase = css((t) => ({
   minWidth: "280px",
   maxWidth: "360px",
   padding: "10px 12px",
   borderRadius: "8px",
   fontSize: "14px",
-  boxShadow:
-    "0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)",
-  border: "1px solid rgba(255,255,255,0.2)",
-  color: "white",
-});
+  boxShadow: `0 10px 15px -3px ${t.var("--black-10")}, 0 4px 6px -2px ${t.var("--black-05")}`,
+  border: `1px solid ${t.var("--white-20")}`,
+  color: t.var("--text-inverse"),
+}));
 
-const toastError = css({ background: "rgba(239, 68, 68, 0.9)" });
-const toastSuccess = css({ background: "rgba(16, 185, 129, 0.9)" });
-const toastWarning = css({ background: "rgba(245, 158, 11, 0.9)" });
-const toastInfo = css({ background: "rgba(59, 130, 246, 0.9)" });
+const toastError = css((t) => ({ background: t.var("--danger-90") }));
+const toastSuccess = css((t) => ({ background: t.var("--success-90") }));
+const toastWarning = css((t) => ({ background: t.var("--warning-90") }));
+const toastInfo = css((t) => ({ background: t.var("--info-90") }));

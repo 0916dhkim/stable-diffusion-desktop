@@ -197,29 +197,29 @@ function Workspace() {
 
   return (
     <div
-      class={css({
+      class={css((t) => ({
         height: "100vh",
         overflow: "auto",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-        color: "white",
+        background: t.var("--bg-primary-gradient"),
+        color: t.var("--text-inverse"),
         fontFamily: "system-ui, -apple-system, sans-serif",
-      })}
+      }))}
     >
       {/* Header with project info and controls */}
       <div
-        class={css({
+        class={css((t) => ({
           alignSelf: "stretch",
           padding: "16px 24px",
-          background: "rgba(255, 255, 255, 0.1)",
+          background: t.var("--white-10"),
           backdropFilter: "blur(10px)",
-          borderBottom: "1px solid rgba(255, 255, 255, 0.2)",
+          borderBottom: `1px solid ${t.var("--white-20")}`,
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-        })}
+        }))}
       >
         <div
           class={css({
@@ -238,13 +238,13 @@ function Workspace() {
             {loaderData().name}
           </h1>
           <div
-            class={css({
+            class={css((t) => ({
               padding: "4px 8px",
-              background: "rgba(255, 255, 255, 0.2)",
+              background: t.var("--white-20"),
               borderRadius: "4px",
               fontSize: "12px",
               fontWeight: "500",
-            })}
+            }))}
           >
             Project
           </div>
@@ -253,33 +253,33 @@ function Workspace() {
         <div class={css({ display: "flex", gap: "12px" })}>
           <button
             onClick={handleOpenSettings}
-            class={css({
+            class={css((t) => ({
               padding: "8px 16px",
-              background: "rgba(255, 255, 255, 0.2)",
-              color: "white",
-              border: "1px solid rgba(255, 255, 255, 0.3)",
+              background: t.var("--white-20"),
+              color: t.var("--text-inverse"),
+              border: `1px solid ${t.var("--white-30")}`,
               borderRadius: "6px",
               fontSize: "14px",
               cursor: "pointer",
               transition: "all 0.2s",
-              "&:hover": { background: "rgba(255, 255, 255, 0.3)" },
-            })}
+              "&:hover": { background: t.var("--white-30") },
+            }))}
           >
             Settings
           </button>
           <button
             onClick={handleCloseProject}
-            class={css({
+            class={css((t) => ({
               padding: "8px 16px",
-              background: "rgba(239, 68, 68, 0.8)",
-              color: "white",
-              border: "1px solid rgba(239, 68, 68, 0.5)",
+              background: t.var("--danger-80"),
+              color: t.var("--text-inverse"),
+              border: `1px solid ${t.var("--danger-border")}`,
               borderRadius: "6px",
               fontSize: "14px",
               cursor: "pointer",
               transition: "all 0.2s",
-              "&:hover": { background: "rgba(239, 68, 68, 1)" },
-            })}
+              "&:hover": { background: t.var("--danger-100") },
+            }))}
           >
             Close Project
           </button>
@@ -289,15 +289,15 @@ function Workspace() {
         fallback={
           <div class={css({ textAlign: "center" })}>
             <div
-              class={css({
+              class={css((t) => ({
                 width: "40px",
                 height: "40px",
-                border: "4px solid rgba(255, 255, 255, 0.3)",
+                border: `4px solid ${t.var("--white-30")}`,
                 borderTop: "4px solid white",
                 borderRadius: "50%",
                 animation: "spin 1s linear infinite",
                 margin: "0 auto 16px",
-              })}
+              }))}
             />
             <p>Loading project...</p>
             <style>
@@ -326,15 +326,15 @@ function Workspace() {
             {/* Prompt form */}
             <form
               onSubmit={handleSubmit}
-              class={css({
+              class={css((t) => ({
                 width: "100%",
                 maxWidth: "860px",
-                background: "rgba(255, 255, 255, 0.1)",
+                background: t.var("--white-10"),
                 backdropFilter: "blur(10px)",
                 borderRadius: "12px",
                 padding: "24px",
-                border: "1px solid rgba(255, 255, 255, 0.2)",
-              })}
+                border: `1px solid ${t.var("--white-20")}`,
+              }))}
             >
               <div
                 class={css({
@@ -378,16 +378,16 @@ function Workspace() {
                 }
                 placeholder="A cinematic portrait of a cyberpunk samurai, dramatic lighting, 35mm film"
                 rows={3}
-                class={css({
+                class={css((t) => ({
                   width: "100%",
                   resize: "vertical",
                   padding: "12px",
-                  background: "rgba(255, 255, 255, 0.9)",
-                  color: "#111827",
-                  border: "1px solid rgba(0,0,0,0.1)",
+                  background: t.var("--white-90"),
+                  color: t.var("--text-darker"),
+                  border: `1px solid ${t.var("--black-10")}`,
                   borderRadius: "8px",
                   fontSize: "14px",
-                })}
+                }))}
               />
 
               {/* Advanced options toggle */}
@@ -444,16 +444,16 @@ function Workspace() {
                       }
                       placeholder="blurry, low-res, bad anatomy, extra fingers"
                       rows={2}
-                      class={css({
+                      class={css((t) => ({
                         width: "100%",
                         resize: "vertical",
                         padding: "12px",
-                        background: "rgba(255, 255, 255, 0.75)",
-                        color: "#111827",
-                        border: "1px solid rgba(0,0,0,0.1)",
+                        background: t.var("--white-75"),
+                        color: t.var("--text-darker"),
+                        border: `1px solid ${t.var("--black-10")}`,
                         borderRadius: "8px",
                         fontSize: "14px",
-                      })}
+                      }))}
                     />
 
                     {/* Controls grid */}
@@ -488,15 +488,15 @@ function Workspace() {
                               }),
                             })
                           }
-                          class={css({
+                          class={css((t) => ({
                             width: "100%",
                             padding: "10px 12px",
-                            background: "rgba(255,255,255,0.9)",
-                            color: "#111827",
-                            border: "1px solid rgba(0,0,0,0.1)",
+                            background: t.var("--white-90"),
+                            color: t.var("--text-darker"),
+                            border: `1px solid ${t.var("--black-10")}`,
                             borderRadius: "8px",
                             fontSize: "14px",
-                          })}
+                          }))}
                         >
                           <option value="">Model (optional)</option>
                           <option value="sd3.5-large">
@@ -613,15 +613,15 @@ function Workspace() {
                               }),
                             });
                           }}
-                          class={css({
+                          class={css((t) => ({
                             width: "100%",
                             padding: "10px 12px",
-                            background: "rgba(255,255,255,0.9)",
-                            color: "#111827",
-                            border: "1px solid rgba(0,0,0,0.1)",
+                            background: t.var("--white-90"),
+                            color: t.var("--text-darker"),
+                            border: `1px solid ${t.var("--black-10")}`,
                             borderRadius: "8px",
                             fontSize: "14px",
-                          })}
+                          }))}
                         >
                           <option value="">Size (optional)</option>
                           <option value="512x512">512 x 512</option>
@@ -657,15 +657,15 @@ function Workspace() {
                               }),
                             })
                           }
-                          class={css({
+                          class={css((t) => ({
                             width: "100%",
                             padding: "10px 12px",
-                            background: "rgba(255,255,255,0.75)",
-                            color: "#111827",
-                            border: "1px solid rgba(0,0,0,0.1)",
+                            background: t.var("--white-75"),
+                            color: t.var("--text-darker"),
+                            border: `1px solid ${t.var("--black-10")}`,
                             borderRadius: "8px",
                             fontSize: "14px",
-                          })}
+                          }))}
                         />
                       </div>
                     </div>
@@ -687,14 +687,14 @@ function Workspace() {
                     project: search().project,
                     prompt: "",
                   }}
-                  class={css({
+                  class={css((t) => ({
                     padding: "10px 16px",
                     background: "transparent",
-                    color: "white",
-                    border: "1px solid rgba(255, 255, 255, 0.4)",
+                    color: t.var("--text-inverse"),
+                    border: `1px solid ${t.var("--white-40")}`,
                     borderRadius: "8px",
                     cursor: "pointer",
-                  })}
+                  }))}
                 >
                   Reset
                 </Link>
@@ -703,21 +703,21 @@ function Workspace() {
                   type="submit"
                   disabled={!canSubmit()}
                   class={clsx(
-                    css({
+                    css((t) => ({
                       padding: "10px 16px",
-                      color: "white",
+                      color: t.var("--text-inverse"),
                       border: "none",
                       borderRadius: "8px",
                       fontWeight: 600,
-                    }),
+                    })),
                     canSubmit()
                       ? css({
-                          background: "#10b981",
+                          background: "var(--success)",
                           cursor: "pointer",
-                          "&:hover": { background: "#059669" },
+                          "&:hover": { background: "var(--success-hover)" },
                         })
                       : css({
-                          background: "rgba(16, 185, 129, 0.5)",
+                          background: "var(--success-50)",
                           cursor: "not-allowed",
                         })
                   )}
@@ -747,14 +747,14 @@ function Workspace() {
                     // src={`media://${latestImagePath()}`}
                     src={filePathToMediaUrl(latestImagePath()!)}
                     alt="Latest generation"
-                    class={css({
+                    class={css((t) => ({
                       width: "100%",
                       maxHeight: "480px",
                       objectFit: "contain",
-                      background: "rgba(255,255,255,0.15)",
-                      border: "1px solid rgba(255,255,255,0.25)",
+                      background: t.var("--white-15"),
+                      border: `1px solid ${t.var("--white-25")}`,
                       borderRadius: "8px",
-                    })}
+                    }))}
                   />
                 </div>
               </Show>
@@ -775,15 +775,15 @@ function Workspace() {
                   <button
                     type="button"
                     onClick={() => void loadHistory()}
-                    class={css({
+                    class={css((t) => ({
                       padding: "6px 10px",
-                      background: "rgba(255, 255, 255, 0.15)",
-                      color: "white",
-                      border: "1px solid rgba(255, 255, 255, 0.25)",
+                      background: t.var("--white-15"),
+                      color: t.var("--text-inverse"),
+                      border: `1px solid ${t.var("--white-25")}`,
                       borderRadius: "6px",
                       cursor: "pointer",
                       fontSize: "12px",
-                    })}
+                    }))}
                   >
                     Refresh
                   </button>
@@ -811,23 +811,23 @@ function Workspace() {
                             project: projectPath,
                             image: String(item.id),
                           })}
-                          class={css({
-                            background: "rgba(255,255,255,0.12)",
-                            border: "1px solid rgba(255,255,255,0.2)",
+                          class={css((t) => ({
+                            background: t.var("--white-12"),
+                            border: `1px solid ${t.var("--white-20")}`,
                             borderRadius: "8px",
                             overflow: "hidden",
-                          })}
+                          }))}
                         >
                           <img
                             src={filePathToMediaUrl(item.imagePath)}
                             alt={item.prompt}
-                            class={css({
+                            class={css((t) => ({
                               width: "100%",
                               height: "140px",
                               objectFit: "cover",
                               display: "block",
-                              background: "rgba(255,255,255,0.1)",
-                            })}
+                              background: t.var("--white-10"),
+                            }))}
                           />
                           <div
                             class={css({
