@@ -304,8 +304,12 @@ app.whenReady().then(async () => {
         form.set("seed", String(parseInt(input.seed, 10)));
       }
       form.set("output_format", "png");
-      form.set("model", model);
-      form.set("aspect_ratio", aspectRatio);
+      if (model != null) {
+        form.set("model", model);
+      }
+      if (aspectRatio != null) {
+        form.set("aspect_ratio", aspectRatio);
+      }
 
       const response = await fetchApi(
         "https://api.stability.ai/v2beta/stable-image/generate/sd3",
