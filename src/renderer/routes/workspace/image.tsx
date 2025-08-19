@@ -72,7 +72,7 @@ function ImageDetailsPage() {
         display: "flex",
         flexDirection: "column",
         background: t.var("--gradient-primary"),
-        color: t.var("--color-paper-100"),
+        color: t.var("--color-paper-800"),
         fontFamily: "system-ui, -apple-system, sans-serif",
       }))}
     >
@@ -100,7 +100,6 @@ function ImageDetailsPage() {
             class={css((t) => ({
               padding: "6px 10px",
               background: "transparent",
-              color: t.var("--color-paper-100"),
               border: `1px solid ${t.var("--color-paper-400")}`,
               borderRadius: "6px",
               cursor: "pointer",
